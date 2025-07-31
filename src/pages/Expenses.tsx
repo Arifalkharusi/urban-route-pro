@@ -1,0 +1,327 @@
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import GradientCard from "@/components/GradientCard";
+import MobileNavigation from "@/components/MobileNavigation";
+import { Plus, Fuel, Wrench, Receipt, Car, Calculator } from "lucide-react";
+
+interface Expense {
+  id: string;
+  amount: number;
+  category: string;
+  description: string;
+  date: Date;
+  type: "manual" | "mileage";
+  miles?: number;
+  costPerMile?: number;
+}
+
+const Expenses = () => {
+  const [expenses, setExpenses] = useState<Expense[]>([
+    {
+      id: "1",
+      amount: 45.20,
+      category: "Fuel",
+      description: "Gas station fill-up",
+      date: new Date(),
+      type: "manual"
+    },
+    {
+      id: "2",
+      amount: 24.50,
+      category: "Mileage",
+      description: "Business miles",
+      date: new Date(Date.now() - 2 * 60 * 60 * 1000),
+      type: "mileage",
+      miles: 45,
+      costPerMile: 0.545
+    }
+  ]);
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [expenseType, setExpenseType] = useState<"manual" | "mileage">("manual");
+  const [newExpense, setNewExpense] = useState({
+    amount: "",
+    category: "",
+    description: "",
+    miles: "",
+    costPerMile: "0.545" // Standard IRS rate
+  });
+
+  const totalToday = expenses
+    .filter(expense => expense.date.toDateString() === new Date().toDateString())
+    .reduce((sum, expense) => sum + expense.amount, 0);
+
+  const handleAddExpense = () => {
+    if (expenseType === "manual" && newExpense.amount && newExpense.category) {
+      const expense: Expense = {
+        id: Date.now().toString(),
+        amount: parseFloat(newExpense.amount),
+        category: newExpense.category,
+        description: newExpense.description || "Manual expense",
+        date: new Date(),
+        type: "manual"
+      };
+      setExpenses([expense, ...expenses]);
+    } else if (expenseType === "mileage" && newExpense.miles && newExpense.costPerMile) {
+      const calculatedAmount = parseFloat(newExpense.miles) * parseFloat(newExpense.costPerMile);
+      const expense: Expense = {
+        id: Date.now().toString(),
+        amount: calculatedAmount,
+        category: "Mileage",
+        description: newExpense.description || "Business mileage",
+        date: new Date(),
+        type: "mileage",
+        miles: parseFloat(newExpense.miles),
+        costPerMile: parseFloat(newExpense.costPerMile)
+      };
+      setExpenses([expense, ...expenses]);
+    }
+    
+    setNewExpense({ amount: "", category: "", description: "", miles: "", costPerMile: "0.545" });
+    setIsDialogOpen(false);
+  };
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: false
+    });
+  };
+
+  const getCategoryIcon = (category: string) => {
+    switch (category.toLowerCase()) {
+      case "fuel":
+        return <Fuel className="w-4 h-4" />;
+      case "maintenance":
+        return <Wrench className="w-4 h-4" />;
+      case "mileage":
+        return <Car className="w-4 h-4" />;
+      default:
+        return <Receipt className="w-4 h-4" />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background pb-20">
+      {/* Header */}
+      <div className="bg-gradient-primary text-white p-6">
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <h1 className="text-2xl font-bold">Expenses</h1>
+            <p className="opacity-90">Track business expenses</p>
+          </div>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button 
+                size="sm" 
+                variant="secondary"
+                className="bg-white/20 hover:bg-white/30 text-white border-0"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="mx-4 rounded-2xl">
+              <DialogHeader>
+                <DialogTitle>Add New Expense</DialogTitle>
+                <DialogDescription>
+                  Record a business expense or calculate mileage
+                </DialogDescription>
+              </DialogHeader>
+              
+              <Tabs value={expenseType} onValueChange={(value) => setExpenseType(value as "manual" | "mileage")}>
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="manual">Manual Entry</TabsTrigger>
+                  <TabsTrigger value="mileage">Mileage</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="manual" className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="amount">Amount ($)</Label>
+                    <Input
+                      id="amount"
+                      type="number"
+                      step="0.01"
+                      placeholder="0.00"
+                      value={newExpense.amount}
+                      onChange={(e) => setNewExpense({...newExpense, amount: e.target.value})}
+                      className="rounded-xl"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Category</Label>
+                    <Select value={newExpense.category} onValueChange={(value) => setNewExpense({...newExpense, category: value})}>
+                      <SelectTrigger className="rounded-xl">
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Fuel">Fuel</SelectItem>
+                        <SelectItem value="Maintenance">Maintenance</SelectItem>
+                        <SelectItem value="Insurance">Insurance</SelectItem>
+                        <SelectItem value="Parking">Parking</SelectItem>
+                        <SelectItem value="Tolls">Tolls</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="description">Description</Label>
+                    <Input
+                      id="description"
+                      placeholder="Optional description"
+                      value={newExpense.description}
+                      onChange={(e) => setNewExpense({...newExpense, description: e.target.value})}
+                      className="rounded-xl"
+                    />
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="mileage" className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="miles">Miles Driven</Label>
+                    <Input
+                      id="miles"
+                      type="number"
+                      step="0.1"
+                      placeholder="0.0"
+                      value={newExpense.miles}
+                      onChange={(e) => setNewExpense({...newExpense, miles: e.target.value})}
+                      className="rounded-xl"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="costPerMile">Cost per Mile ($)</Label>
+                    <Input
+                      id="costPerMile"
+                      type="number"
+                      step="0.001"
+                      value={newExpense.costPerMile}
+                      onChange={(e) => setNewExpense({...newExpense, costPerMile: e.target.value})}
+                      className="rounded-xl"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Standard IRS rate: $0.545/mile
+                    </p>
+                  </div>
+
+                  {newExpense.miles && newExpense.costPerMile && (
+                    <div className="bg-accent p-3 rounded-xl">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Calculator className="w-4 h-4 text-primary" />
+                        <span className="text-sm font-medium">Calculated Amount</span>
+                      </div>
+                      <p className="text-2xl font-bold text-primary">
+                        ${(parseFloat(newExpense.miles) * parseFloat(newExpense.costPerMile)).toFixed(2)}
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="space-y-2">
+                    <Label htmlFor="mileage-description">Description</Label>
+                    <Input
+                      id="mileage-description"
+                      placeholder="Trip purpose"
+                      value={newExpense.description}
+                      onChange={(e) => setNewExpense({...newExpense, description: e.target.value})}
+                      className="rounded-xl"
+                    />
+                  </div>
+                </TabsContent>
+
+                <Button 
+                  onClick={handleAddExpense}
+                  className="w-full bg-gradient-primary hover:opacity-90 rounded-xl"
+                >
+                  Add Expense
+                </Button>
+              </Tabs>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        {/* Today's Total */}
+        <GradientCard variant="card" className="bg-white/10 backdrop-blur-sm border-white/20">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-white/80 text-sm">Today's Expenses</p>
+              <p className="text-2xl font-bold text-white">${totalToday.toFixed(2)}</p>
+            </div>
+            <Receipt className="w-8 h-8 text-white/60" />
+          </div>
+        </GradientCard>
+      </div>
+
+      <div className="p-6 space-y-4">
+        {expenses.length === 0 ? (
+          <GradientCard className="text-center py-8">
+            <Receipt className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="font-semibold mb-2">No expenses recorded</h3>
+            <p className="text-muted-foreground mb-4">Start tracking your business expenses</p>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-gradient-primary hover:opacity-90 rounded-xl">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Your First Expense
+                </Button>
+              </DialogTrigger>
+            </Dialog>
+          </GradientCard>
+        ) : (
+          <div className="space-y-3">
+            {expenses.map((expense) => (
+              <GradientCard key={expense.id} className="hover:shadow-soft transition-shadow">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-8 h-8 bg-warning/20 rounded-full flex items-center justify-center text-warning">
+                        {getCategoryIcon(expense.category)}
+                      </div>
+                      <span className="font-medium text-sm bg-accent text-accent-foreground px-2 py-1 rounded-lg">
+                        {expense.category}
+                      </span>
+                      {expense.type === "mileage" && (
+                        <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded">
+                          Auto-calculated
+                        </span>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium">{expense.description}</p>
+                      
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        <span>{formatTime(expense.date)}</span>
+                        {expense.type === "mileage" && expense.miles && (
+                          <span>{expense.miles} miles @ ${expense.costPerMile}/mi</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="text-right">
+                    <p className="text-xl font-bold text-warning">
+                      -${expense.amount.toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+              </GradientCard>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <MobileNavigation />
+    </div>
+  );
+};
+
+export default Expenses;
