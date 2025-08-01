@@ -376,20 +376,22 @@ const Earnings = () => {
                     </div>
                   </div>
                   
-                  <div className="space-y-3 sm:space-y-2">
-                    {platformEarnings.map((earning) => (
-                      <GradientCard key={earning.id} className="hover:shadow-soft transition-shadow relative">
-                        {/* Delete button - Top right corner for all screens */}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => openDeleteDialog(earning.id)}
-                          className="absolute top-2 right-2 h-8 w-8 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-full z-10"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                   <div className="space-y-3 sm:space-y-2">
+                     {platformEarnings.map((earning) => (
+                       <GradientCard key={earning.id} className="hover:shadow-soft transition-shadow">
+                         {/* Delete button - Top of card */}
+                         <div className="flex justify-end mb-3">
+                           <Button
+                             variant="ghost"
+                             size="sm"
+                             onClick={() => openDeleteDialog(earning.id)}
+                             className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-full"
+                           >
+                             <Trash2 className="w-4 h-4" />
+                           </Button>
+                         </div>
 
-                        <div className="space-y-3 sm:space-y-0 sm:flex sm:justify-between sm:items-center pr-10">
+                         <div className="space-y-3 sm:space-y-0 sm:flex sm:justify-between sm:items-center">
                           {/* Mobile: Top Section with Date and Amount */}
                           <div className="flex justify-between items-start sm:hidden">
                             <div className="flex items-center gap-2 text-xs text-muted-foreground">
