@@ -355,34 +355,79 @@ const Earnings = () => {
                     </div>
                   </div>
                   
-                  <div className="space-y-2">
+                  <div className="space-y-3 sm:space-y-2">
                     {platformEarnings.map((earning) => (
                       <GradientCard key={earning.id} className="hover:shadow-soft transition-shadow">
-                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0">
-                          <div className="space-y-2 sm:space-y-1 flex-1">
-                            <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
-                              <CalendarIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <div className="space-y-3 sm:space-y-0 sm:flex sm:justify-between sm:items-center">
+                          {/* Mobile: Top Section with Date and Amount */}
+                          <div className="flex justify-between items-start sm:hidden">
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                              <CalendarIcon className="w-3 h-3" />
                               {new Date(earning.date).toLocaleDateString()}
                             </div>
-                            <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm">
+                            <div className="text-right">
+                              <p className="text-lg font-bold text-success">
+                                ${earning.amount.toFixed(2)}
+                              </p>
+                              <div className="flex items-center gap-1 text-xs text-success">
+                                <TrendingUp className="w-3 h-3" />
+                                ${(earning.amount / earning.hours).toFixed(2)}/hr
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Mobile: Bottom Section with Stats */}
+                          <div className="grid grid-cols-3 gap-3 sm:hidden">
+                            <div className="bg-muted/20 rounded-lg p-2 text-center">
+                              <div className="flex items-center justify-center gap-1 mb-1">
+                                <Users className="w-3 h-3 text-muted-foreground" />
+                              </div>
+                              <p className="text-xs font-medium">{earning.trips}</p>
+                              <p className="text-xs text-muted-foreground">trips</p>
+                            </div>
+                            <div className="bg-muted/20 rounded-lg p-2 text-center">
+                              <div className="flex items-center justify-center gap-1 mb-1">
+                                <Clock className="w-3 h-3 text-muted-foreground" />
+                              </div>
+                              <p className="text-xs font-medium">{earning.hours}h</p>
+                              <p className="text-xs text-muted-foreground">hours</p>
+                            </div>
+                            <div className="bg-success/10 rounded-lg p-2 text-center">
+                              <div className="flex items-center justify-center gap-1 mb-1">
+                                <DollarSign className="w-3 h-3 text-success" />
+                              </div>
+                              <p className="text-xs font-medium text-success">${(earning.amount / earning.trips).toFixed(2)}</p>
+                              <p className="text-xs text-muted-foreground">per trip</p>
+                            </div>
+                          </div>
+
+                          {/* Desktop: Original Layout */}
+                          <div className="hidden sm:flex sm:flex-1 sm:space-y-1">
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <CalendarIcon className="w-4 h-4" />
+                              {new Date(earning.date).toLocaleDateString()}
+                            </div>
+                            <div className="flex items-center gap-4 text-sm">
                               <div className="flex items-center gap-1">
-                                <Users className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground" />
+                                <Users className="w-4 h-4 text-muted-foreground" />
                                 <span>{earning.trips} trips</span>
                               </div>
                               <div className="flex items-center gap-1">
-                                <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground" />
+                                <Clock className="w-4 h-4 text-muted-foreground" />
                                 <span>{earning.hours}h</span>
                               </div>
-                              <div className="text-muted-foreground col-span-2 sm:col-span-1">
+                              <div className="text-muted-foreground">
                                 ${(earning.amount / earning.trips).toFixed(2)}/trip
                               </div>
                             </div>
                           </div>
-                          <div className="text-left sm:text-right">
-                            <p className="text-lg sm:text-xl font-bold text-success">
+
+                          {/* Desktop: Amount Display */}
+                          <div className="hidden sm:block sm:text-right">
+                            <p className="text-xl font-bold text-success">
                               ${earning.amount.toFixed(2)}
                             </p>
-                            <div className="flex items-center gap-1 text-xs sm:text-sm text-success">
+                            <div className="flex items-center gap-1 text-sm text-success">
                               <TrendingUp className="w-3 h-3" />
                               ${(earning.amount / earning.hours).toFixed(2)}/hr
                             </div>
