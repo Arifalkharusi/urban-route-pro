@@ -135,33 +135,54 @@ const Targets = () => {
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
-      <div className="bg-gradient-primary text-white p-6">
-        <div className="flex justify-between items-center mb-4">
+      <div className="bg-gradient-primary text-white p-6 pb-8">
+        <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-2xl font-bold">Income Targets</h1>
-            <p className="opacity-90">Set and track your goals</p>
+            <p className="opacity-90">Set and track your earning goals</p>
           </div>
-          <Button 
-            size="sm" 
-            variant="secondary"
-            className="bg-white/20 hover:bg-white/30 text-white border-0"
-            onClick={() => openEditDialog()}
-          >
-            <Target className="w-4 h-4 mr-2" />
-            New Target
-          </Button>
+          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+            <Target className="w-5 h-5" />
+          </div>
         </div>
 
-        {/* Summary Card */}
+        {/* Today's Overview */}
         <GradientCard variant="card" className="bg-white/10 backdrop-blur-sm border-white/20">
-          <div className="text-center">
-            <p className="text-white/80 text-sm mb-1">Active Targets</p>
-            <p className="text-2xl font-bold text-white">{targets.length}</p>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold text-white">Target Overview</h2>
+            <Button 
+              size="sm" 
+              variant="ghost"
+              className="bg-white/20 hover:bg-white/30 text-white border-0 h-8 px-3"
+              onClick={() => openEditDialog()}
+            >
+              <Target className="w-4 h-4 mr-1" />
+              New
+            </Button>
+          </div>
+          
+          <div className="grid grid-cols-3 gap-4">
+            <div className="text-center">
+              <p className="text-white/80 text-sm">Active</p>
+              <p className="text-xl font-bold text-white">{targets.length}</p>
+            </div>
+            <div className="text-center">
+              <p className="text-white/80 text-sm">Completed</p>
+              <p className="text-xl font-bold text-success">
+                {targets.filter(t => getProgressPercentage(t.current, t.amount) >= 100).length}
+              </p>
+            </div>
+            <div className="text-center">
+              <p className="text-white/80 text-sm">In Progress</p>
+              <p className="text-xl font-bold text-warning">
+                {targets.filter(t => getProgressPercentage(t.current, t.amount) < 100).length}
+              </p>
+            </div>
           </div>
         </GradientCard>
       </div>
 
-      <div className="p-6 space-y-4">
+      <div className="p-6 space-y-6 -mt-4">
         {targets.length === 0 ? (
           <GradientCard className="text-center py-8">
             <Target className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
@@ -183,20 +204,20 @@ const Targets = () => {
               const remaining = target.amount - target.current;
 
               return (
-                <GradientCard key={target.id} className="hover:shadow-soft transition-shadow">
+                <GradientCard key={target.id} className="hover:shadow-elegant transition-all duration-300 animate-fade-in">
                   <div className="space-y-4">
                     {/* Header */}
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      <div className="flex items-center gap-3">
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${
                           isCompleted 
-                            ? "bg-success/20 text-success" 
-                            : "bg-primary/20 text-primary"
+                            ? "bg-gradient-to-br from-success to-success/80 text-white" 
+                            : "bg-gradient-to-br from-primary to-primary/80 text-white"
                         }`}>
                           {getPeriodIcon(target.period)}
                         </div>
                         <div>
-                          <h3 className="font-semibold capitalize">{target.period} Target</h3>
+                          <h3 className="font-bold text-lg capitalize">{target.period} Goal</h3>
                           <p className="text-sm text-muted-foreground">
                             {getRemainingTime(target.period, target.startDate)}
                           </p>
@@ -207,50 +228,90 @@ const Targets = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => openEditDialog(target)}
-                        className="h-8 w-8 p-0"
+                        className="h-9 w-9 p-0 hover:bg-muted/50 rounded-xl"
                       >
                         <Edit3 className="w-4 h-4" />
                       </Button>
                     </div>
 
-                    {/* Progress */}
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="font-medium">${target.current.toFixed(2)}</span>
-                        <span className="text-muted-foreground">${target.amount.toFixed(2)}</span>
+                    {/* Amount Display */}
+                    <div className="flex items-end justify-between mb-3">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Current Progress</p>
+                        <p className="text-3xl font-bold text-foreground">${target.current.toFixed(2)}</p>
                       </div>
-                      
+                      <div className="text-right">
+                        <p className="text-sm text-muted-foreground">Target</p>
+                        <p className="text-xl font-semibold text-muted-foreground">${target.amount.toFixed(2)}</p>
+                      </div>
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div className="space-y-3">
                       <Progress 
                         value={progressPercentage} 
-                        className="h-3"
+                        className="h-4 bg-muted/30"
                       />
                       
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>{progressPercentage.toFixed(1)}% complete</span>
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-2">
+                          <div className={`w-2 h-2 rounded-full ${isCompleted ? 'bg-success' : 'bg-primary'}`} />
+                          <span className="text-sm font-medium">{progressPercentage.toFixed(1)}% complete</span>
+                        </div>
                         {!isCompleted && (
-                          <span>${remaining.toFixed(2)} to go</span>
+                          <span className="text-sm text-muted-foreground">${remaining.toFixed(2)} remaining</span>
                         )}
                         {isCompleted && (
-                          <span className="text-success font-medium">🎉 Target achieved!</span>
+                          <span className="text-sm text-success font-medium flex items-center gap-1">
+                            🎉 Achieved!
+                          </span>
                         )}
                       </div>
                     </div>
 
-                    {/* Stats */}
-                    {target.period === "weekly" && (
-                      <div className="grid grid-cols-2 gap-4 pt-2 border-t border-border">
-                        <div className="text-center">
-                          <p className="text-xs text-muted-foreground">Daily Average</p>
-                          <p className="font-semibold">${(target.current / 7).toFixed(2)}</p>
-                        </div>
-                        <div className="text-center">
-                          <p className="text-xs text-muted-foreground">Needed Daily</p>
-                          <p className="font-semibold">
-                            ${remaining > 0 ? (remaining / Math.max(1, Math.ceil((new Date(target.startDate.getTime() + 7 * 24 * 60 * 60 * 1000).getTime() - new Date().getTime()) / (24 * 60 * 60 * 1000)))).toFixed(2) : "0.00"}
-                          </p>
-                        </div>
-                      </div>
-                    )}
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border/50">
+                      {target.period === "daily" && (
+                        <>
+                          <div className="bg-muted/30 rounded-xl p-3 text-center">
+                            <p className="text-xs text-muted-foreground">Today's Rate</p>
+                            <p className="font-bold text-lg">${(target.current).toFixed(2)}/day</p>
+                          </div>
+                          <div className="bg-muted/30 rounded-xl p-3 text-center">
+                            <p className="text-xs text-muted-foreground">Completion</p>
+                            <p className="font-bold text-lg">{progressPercentage.toFixed(0)}%</p>
+                          </div>
+                        </>
+                      )}
+                      
+                      {target.period === "weekly" && (
+                        <>
+                          <div className="bg-muted/30 rounded-xl p-3 text-center">
+                            <p className="text-xs text-muted-foreground">Daily Average</p>
+                            <p className="font-bold text-lg">${(target.current / 7).toFixed(2)}</p>
+                          </div>
+                          <div className="bg-muted/30 rounded-xl p-3 text-center">
+                            <p className="text-xs text-muted-foreground">Daily Needed</p>
+                            <p className="font-bold text-lg">
+                              ${remaining > 0 ? (remaining / Math.max(1, Math.ceil((new Date(target.startDate.getTime() + 7 * 24 * 60 * 60 * 1000).getTime() - new Date().getTime()) / (24 * 60 * 60 * 1000)))).toFixed(2) : "0.00"}
+                            </p>
+                          </div>
+                        </>
+                      )}
+                      
+                      {target.period === "monthly" && (
+                        <>
+                          <div className="bg-muted/30 rounded-xl p-3 text-center">
+                            <p className="text-xs text-muted-foreground">Weekly Average</p>
+                            <p className="font-bold text-lg">${(target.current / 4).toFixed(2)}</p>
+                          </div>
+                          <div className="bg-muted/30 rounded-xl p-3 text-center">
+                            <p className="text-xs text-muted-foreground">Daily Average</p>
+                            <p className="font-bold text-lg">${(target.current / 30).toFixed(2)}</p>
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </GradientCard>
               );
