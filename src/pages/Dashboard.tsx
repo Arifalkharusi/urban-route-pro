@@ -47,13 +47,13 @@ const Dashboard = () => {
   ];
 
   const expenseBreakdown = [
-    { name: 'Fuel', value: 156, color: '#8B5CF6' },
-    { name: 'Maintenance', value: 45, color: '#EC4899' },
-    { name: 'Insurance', value: 33, color: '#10B981' },
-    { name: 'Other', value: 20, color: '#F59E0B' }
+    { name: 'Fuel', value: 156, color: '#1E3C72' },
+    { name: 'Maintenance', value: 45, color: '#00B4DB' },
+    { name: 'Insurance', value: 33, color: '#43CEA2' },
+    { name: 'Other', value: 20, color: '#EF473A' }
   ];
 
-  const COLORS = ['#8B5CF6', '#EC4899', '#10B981', '#F59E0B'];
+  const COLORS = ['#1E3C72', '#00B4DB', '#43CEA2', '#EF473A'];
 
   return (
     <div className="min-h-screen bg-gradient-background pb-20">
@@ -205,41 +205,42 @@ const Dashboard = () => {
                 <AreaChart data={weeklyData}>
                   <defs>
                     <linearGradient id="colorEarnings" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#43CEA2" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#43CEA2" stopOpacity={0}/>
                     </linearGradient>
                     <linearGradient id="colorExpenses" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#EC4899" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#EC4899" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#EF473A" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#EF473A" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
                   <XAxis 
                     dataKey="day" 
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 10, fill: '#6B7280' }}
+                    tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                     interval={0}
                   />
                   <YAxis 
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 10, fill: '#6B7280' }}
+                    tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                     width={35}
                   />
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" opacity={0.5} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
                   <Tooltip 
                     contentStyle={{
-                      backgroundColor: '#FFFFFF',
+                      backgroundColor: 'hsl(var(--card))',
                       border: 'none',
                       borderRadius: '12px',
-                      boxShadow: '0 4px 20px -2px rgba(139, 92, 246, 0.1)',
-                      fontSize: '12px'
+                      boxShadow: 'var(--shadow-card)',
+                      fontSize: '12px',
+                      color: 'hsl(var(--card-foreground))'
                     }}
                   />
                   <Area
                     type="monotone"
                     dataKey="earnings"
-                    stroke="#8B5CF6"
+                    stroke="#43CEA2"
                     strokeWidth={2}
                     fillOpacity={1}
                     fill="url(#colorEarnings)"
@@ -247,7 +248,7 @@ const Dashboard = () => {
                   <Area
                     type="monotone"
                     dataKey="expenses"
-                    stroke="#EC4899"
+                    stroke="#EF473A"
                     strokeWidth={2}
                     fillOpacity={1}
                     fill="url(#colorExpenses)"
@@ -273,28 +274,29 @@ const Dashboard = () => {
                     dataKey="hour" 
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 9, fill: '#6B7280' }}
+                    tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))' }}
                     interval={0}
                   />
                   <YAxis 
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 10, fill: '#6B7280' }}
+                    tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                     width={30}
                   />
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" opacity={0.5} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
                   <Tooltip 
                     contentStyle={{
-                      backgroundColor: '#FFFFFF',
+                      backgroundColor: 'hsl(var(--card))',
                       border: 'none',
                       borderRadius: '12px',
-                      boxShadow: '0 4px 20px -2px rgba(139, 92, 246, 0.1)',
-                      fontSize: '12px'
+                      boxShadow: 'var(--shadow-card)',
+                      fontSize: '12px',
+                      color: 'hsl(var(--card-foreground))'
                     }}
                   />
                   <Bar 
                     dataKey="earnings" 
-                    fill="#8B5CF6" 
+                    fill="#00B4DB" 
                     radius={[4, 4, 0, 0]}
                   />
                 </BarChart>
