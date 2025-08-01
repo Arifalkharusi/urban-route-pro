@@ -425,11 +425,11 @@ const Expenses = () => {
         {filteredExpenses.length === 0 ? (
           <GradientCard className="text-center py-8">
             <Receipt className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="font-semibold mb-2">No expenses recorded</h3>
+            <h3 className="font-semibold mb-2 text-primary">No expenses recorded</h3>
             <p className="text-muted-foreground mb-4">Start tracking your business expenses</p>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-gradient-primary hover:opacity-90 rounded-xl">
+                <Button variant="default" className="rounded-xl">
                   <Plus className="w-4 h-4 mr-2" />
                   Add Your First Expense
                 </Button>
@@ -448,11 +448,11 @@ const Expenses = () => {
                       {formatTime(expense.date)}
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-bold text-warning">
+                      <p className="text-lg font-bold text-destructive">
                         -${expense.amount.toFixed(2)}
                       </p>
                       {expense.type === "mileage" && (
-                        <p className="text-xs text-primary">Auto-calc</p>
+                        <p className="text-xs text-accent">Auto-calc</p>
                       )}
                     </div>
                   </div>
@@ -460,11 +460,11 @@ const Expenses = () => {
                   {/* Mobile: Category and Description */}
                   <div className="sm:hidden">
                     <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 bg-warning/20 rounded-full flex items-center justify-center text-warning">
+                      <div className="w-8 h-8 bg-destructive/20 rounded-full flex items-center justify-center text-destructive">
                         {getCategoryIcon(expense.category)}
                       </div>
                       <div className="flex-1">
-                        <span className="font-medium text-sm bg-accent text-accent-foreground px-2 py-1 rounded-lg">
+                        <span className="font-medium text-sm bg-muted/30 text-foreground px-2 py-1 rounded-lg">
                           {expense.category}
                         </span>
                       </div>
@@ -482,11 +482,11 @@ const Expenses = () => {
                       <p className="text-xs text-muted-foreground">category</p>
                     </div>
                     {expense.type === "mileage" && expense.miles ? (
-                      <div className="bg-primary/10 rounded-lg p-2 text-center">
+                      <div className="bg-accent/10 rounded-lg p-2 text-center">
                         <div className="flex items-center justify-center gap-1 mb-1">
-                          <Car className="w-3 h-3 text-primary" />
+                          <Car className="w-3 h-3 text-accent" />
                         </div>
-                        <p className="text-xs font-medium text-primary">{expense.miles} mi</p>
+                        <p className="text-xs font-medium text-accent">{expense.miles} mi</p>
                         <p className="text-xs text-muted-foreground">${expense.costPerMile}/mi</p>
                       </div>
                     ) : (
@@ -503,14 +503,14 @@ const Expenses = () => {
                   {/* Desktop: Original Layout */}
                   <div className="hidden sm:block sm:flex-1">
                     <div className="flex items-center gap-2 mb-2 flex-wrap">
-                      <div className="w-7 h-7 sm:w-8 sm:h-8 bg-warning/20 rounded-full flex items-center justify-center text-warning">
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 bg-destructive/20 rounded-full flex items-center justify-center text-destructive">
                         {getCategoryIcon(expense.category)}
                       </div>
-                      <span className="font-medium text-xs sm:text-sm bg-accent text-accent-foreground px-2 py-1 rounded-lg">
+                      <span className="font-medium text-xs sm:text-sm bg-muted/30 text-foreground px-2 py-1 rounded-lg">
                         {expense.category}
                       </span>
                       {expense.type === "mileage" && (
-                        <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded">
+                        <span className="text-xs bg-accent/20 text-accent px-2 py-1 rounded">
                           Auto-calculated
                         </span>
                       )}
@@ -530,7 +530,7 @@ const Expenses = () => {
                   
                   {/* Desktop: Amount Display */}
                   <div className="hidden sm:block sm:text-right">
-                    <p className="text-lg sm:text-xl font-bold text-warning">
+                    <p className="text-lg sm:text-xl font-bold text-destructive">
                       -${expense.amount.toFixed(2)}
                     </p>
                   </div>
