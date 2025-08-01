@@ -20,7 +20,7 @@ const MobileNavigation = () => {
             className={({ isActive }) =>
               `flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
                 isActive
-                  ? "text-primary bg-accent"
+                  ? "text-primary"
                   : "text-muted-foreground hover:text-foreground"
               }`
             }
