@@ -200,7 +200,7 @@ const Dashboard = () => {
               <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
             </div>
             
-            <div className="h-48 sm:h-64">
+            <div className="h-40 sm:h-48 md:h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={weeklyData}>
                   <defs>
@@ -217,12 +217,14 @@ const Dashboard = () => {
                     dataKey="day" 
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 12, fill: '#6B7280' }}
+                    tick={{ fontSize: 10, fill: '#6B7280' }}
+                    interval={0}
                   />
                   <YAxis 
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 12, fill: '#6B7280' }}
+                    tick={{ fontSize: 10, fill: '#6B7280' }}
+                    width={35}
                   />
                   <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" opacity={0.5} />
                   <Tooltip 
@@ -230,7 +232,8 @@ const Dashboard = () => {
                       backgroundColor: '#FFFFFF',
                       border: 'none',
                       borderRadius: '12px',
-                      boxShadow: '0 4px 20px -2px rgba(139, 92, 246, 0.1)'
+                      boxShadow: '0 4px 20px -2px rgba(139, 92, 246, 0.1)',
+                      fontSize: '12px'
                     }}
                   />
                   <Area
@@ -263,19 +266,21 @@ const Dashboard = () => {
               <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
             </div>
             
-            <div className="h-40 sm:h-48">
+            <div className="h-32 sm:h-40 md:h-48">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={dailyHoursData}>
                   <XAxis 
                     dataKey="hour" 
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 11, fill: '#6B7280' }}
+                    tick={{ fontSize: 9, fill: '#6B7280' }}
+                    interval={0}
                   />
                   <YAxis 
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 12, fill: '#6B7280' }}
+                    tick={{ fontSize: 10, fill: '#6B7280' }}
+                    width={30}
                   />
                   <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" opacity={0.5} />
                   <Tooltip 
@@ -283,7 +288,8 @@ const Dashboard = () => {
                       backgroundColor: '#FFFFFF',
                       border: 'none',
                       borderRadius: '12px',
-                      boxShadow: '0 4px 20px -2px rgba(139, 92, 246, 0.1)'
+                      boxShadow: '0 4px 20px -2px rgba(139, 92, 246, 0.1)',
+                      fontSize: '12px'
                     }}
                   />
                   <Bar 
