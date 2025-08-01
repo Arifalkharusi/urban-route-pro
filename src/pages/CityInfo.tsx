@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -6,7 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import GradientCard from "@/components/GradientCard";
 import MobileNavigation from "@/components/MobileNavigation";
-import { Plane, Train, Bus, Calendar, MapPin, Clock, ChevronDown } from "lucide-react";
+import { Plane, Train, Bus, Calendar, MapPin, Clock, ChevronDown, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface CityEvent {
   id: string;
@@ -29,182 +30,224 @@ interface HourlyCount {
 const CityInfo = () => {
   const [searchCity, setSearchCity] = useState("San Francisco");
   const [activeTab, setActiveTab] = useState("flights");
+  const [loading, setLoading] = useState(false);
+  const [transportData, setTransportData] = useState<Record<string, CityEvent[]>>({
+    flights: [],
+    trains: [],
+    buses: [],
+    events: []
+  });
+  const { toast } = useToast();
 
-  // Predetermined cities
-  const cities = [
-    "San Francisco",
-    "New York",
-    "Los Angeles", 
-    "Chicago",
-    "Miami",
-    "Seattle",
-    "Boston",
-    "Las Vegas",
-    "Denver",
-    "Austin"
-  ];
-
-  // Mock data - in a real app, this would come from APIs
-  const cityData: Record<string, CityEvent[]> = {
-    flights: [
-      {
-        id: "1",
-        title: "AA 1234 - New York",
-        type: "flight",
-        time: "14:30",
-        location: "SFO Terminal 2",
-        details: "Arrival from JFK",
-        passengers: 180,
-        terminal: "Terminal 2"
-      },
-      {
-        id: "2",
-        title: "UA 567 - Los Angeles",
-        type: "flight",
-        time: "14:45",
-        location: "SFO Terminal 3",
-        details: "Arrival from LAX",
-        passengers: 150,
-        terminal: "Terminal 3"
-      },
-      {
-        id: "3",
-        title: "DL 890 - Seattle",
-        type: "flight",
-        time: "15:20",
-        location: "SFO Terminal 1",
-        details: "Arrival from SEA",
-        passengers: 120,
-        terminal: "Terminal 1"
-      },
-      {
-        id: "4",
-        title: "SW 445 - Phoenix",
-        type: "flight",
-        time: "15:55",
-        location: "SFO Terminal 1",
-        details: "Arrival from PHX",
-        passengers: 140,
-        terminal: "Terminal 1"
-      },
-      {
-        id: "5",
-        title: "BA 285 - London",
-        type: "flight",
-        time: "16:10",
-        location: "SFO Terminal G",
-        details: "Arrival from LHR",
-        passengers: 250,
-        terminal: "Terminal G"
-      },
-      {
-        id: "6",
-        title: "JL 002 - Tokyo",
-        type: "flight",
-        time: "16:40",
-        location: "SFO Terminal G",
-        details: "Arrival from NRT",
-        passengers: 200,
-        terminal: "Terminal G"
-      }
-    ],
-    trains: [
-      {
-        id: "7",
-        title: "Caltrain 152",
-        type: "train",
-        time: "14:15",
-        location: "4th & King Station",
-        details: "From San Jose",
-        passengers: 200
-      },
-      {
-        id: "8",
-        title: "BART - Richmond",
-        type: "train",
-        time: "14:42",
-        location: "Embarcadero Station",
-        details: "East Bay service",
-        passengers: 300
-      },
-      {
-        id: "9",
-        title: "Caltrain 156",
-        type: "train",
-        time: "15:15",
-        location: "4th & King Station",
-        details: "From San Jose",
-        passengers: 180
-      },
-      {
-        id: "10",
-        title: "BART - Fremont",
-        type: "train",
-        time: "15:48",
-        location: "Embarcadero Station",
-        details: "South Bay service",
-        passengers: 280
-      }
-    ],
-    buses: [
-      {
-        id: "11",
-        title: "Greyhound 1458",
-        type: "bus",
-        time: "14:30",
-        location: "Transbay Terminal",
-        details: "From Sacramento",
-        passengers: 50
-      },
-      {
-        id: "12",
-        title: "Megabus 123",
-        type: "bus",
-        time: "15:00",
-        location: "Caltrain Station",
-        details: "From Los Angeles",
-        passengers: 45
-      },
-      {
-        id: "13",
-        title: "Greyhound 2267",
-        type: "bus",
-        time: "15:45",
-        location: "Transbay Terminal",
-        details: "From Portland",
-        passengers: 48
-      },
-      {
-        id: "14",
-        title: "FlixBus 456",
-        type: "bus",
-        time: "16:15",
-        location: "Transbay Terminal",
-        details: "From Seattle",
-        passengers: 52
-      }
-    ],
-    events: [
-      {
-        id: "8",
-        title: "Giants vs Dodgers",
-        type: "event",
-        time: "19:05",
-        location: "Oracle Park",
-        details: "MLB Game - High demand expected",
-        passengers: 41000
-      },
-      {
-        id: "9",
-        title: "Tech Conference 2024",
-        type: "event",
-        time: "09:00",
-        location: "Moscone Center",
-        details: "Day 2 of 3-day event",
-        passengers: 5000
-      }
-    ]
+  // Predetermined cities with their airport codes and rail stations
+  const cityConfig = {
+    "San Francisco": { iata: "SFO", railHub: "San Francisco" },
+    "New York": { iata: "JFK", railHub: "New York" },
+    "Los Angeles": { iata: "LAX", railHub: "Los Angeles" },
+    "Chicago": { iata: "ORD", railHub: "Chicago" },
+    "Miami": { iata: "MIA", railHub: "Miami" },
+    "Seattle": { iata: "SEA", railHub: "Seattle" },
+    "Boston": { iata: "BOS", railHub: "Boston" },
+    "Las Vegas": { iata: "LAS", railHub: "Las Vegas" },
+    "Denver": { iata: "DEN", railHub: "Denver" },
+    "Austin": { iata: "AUS", railHub: "Austin" }
   };
+  
+  const cities = Object.keys(cityConfig);
+
+  // Fetch real transport data
+  const fetchTransportData = async (city: string) => {
+    setLoading(true);
+    try {
+      const config = cityConfig[city as keyof typeof cityConfig];
+      if (!config) {
+        throw new Error(`Configuration not found for ${city}`);
+      }
+
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Fetch flight data
+      const flightResponse = await fetch('/api/v1/rest-functions/get-flight-data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          iataCode: config.iata, 
+          date: today 
+        })
+      });
+      
+      const flightData = await flightResponse.json();
+      
+      // Fetch train data (UK only for Transport API)
+      let trainData = { trains: [] };
+      let busData = { buses: [] };
+      
+      if (city === "London") { // Only for UK cities
+        const trainResponse = await fetch('/api/v1/rest-functions/get-transport-data', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            from: config.railHub,
+            to: "Birmingham", // Sample destination
+            type: "train"
+          })
+        });
+        trainData = await trainResponse.json();
+        
+        const busResponse = await fetch('/api/v1/rest-functions/get-transport-data', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            from: config.railHub,
+            to: "Birmingham", // Sample destination
+            type: "bus"
+          })
+        });
+        busData = await busResponse.json();
+      } else {
+        // Mock data for non-UK cities
+        trainData = {
+          trains: [
+            {
+              id: "train-1",
+              title: `Local Service - Downtown ${city}`,
+              type: "train" as const,
+              time: new Date(Date.now() + 30 * 60000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
+              location: `${city} Central Station`,
+              details: "Local service",
+              passengers: 150
+            },
+            {
+              id: "train-2", 
+              title: `Express Service - ${city} Airport`,
+              type: "train" as const,
+              time: new Date(Date.now() + 45 * 60000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
+              location: `${city} Express Terminal`,
+              details: "Airport connection",
+              passengers: 200
+            }
+          ]
+        };
+        
+        busData = {
+          buses: [
+            {
+              id: "bus-1",
+              title: `City Bus Route 1 - ${city}`,
+              type: "bus" as const,
+              time: new Date(Date.now() + 15 * 60000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
+              location: `${city} Bus Terminal`,
+              details: "City center route",
+              passengers: 50
+            },
+            {
+              id: "bus-2",
+              title: `Express Coach - ${city}`,
+              type: "bus" as const, 
+              time: new Date(Date.now() + 60 * 60000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
+              location: `${city} Coach Station`,
+              details: "Long distance service",
+              passengers: 45
+            }
+          ]
+        };
+      }
+
+      // Mock events data
+      const eventsData = {
+        events: [
+          {
+            id: "event-1",
+            title: `${city} Cultural Festival`,
+            type: "event" as const,
+            time: "19:00",
+            location: `${city} Convention Center`,
+            details: "Annual cultural celebration",
+            passengers: 2000
+          },
+          {
+            id: "event-2",
+            title: `Business Conference ${city}`,
+            type: "event" as const, 
+            time: "09:00",
+            location: `${city} Business District`,
+            details: "Professional networking event",
+            passengers: 500
+          }
+        ]
+      };
+
+      setTransportData({
+        flights: flightData.flights || [],
+        trains: trainData.trains || [],
+        buses: busData.buses || [],
+        events: eventsData.events || []
+      });
+
+    } catch (error) {
+      console.error('Error fetching transport data:', error);
+      toast({
+        title: "Error fetching data",
+        description: "Using sample data. Please check your connection.",
+        variant: "destructive"
+      });
+      
+      // Fallback to sample data
+      setTransportData({
+        flights: [
+          {
+            id: "sample-flight-1",
+            title: `Sample Flight - ${searchCity}`,
+            type: "flight" as const,
+            time: "14:30",
+            location: `${searchCity} Airport`,
+            details: "Sample flight data",
+            passengers: 180
+          }
+        ],
+        trains: [
+          {
+            id: "sample-train-1", 
+            title: `Sample Train - ${searchCity}`,
+            type: "train" as const,
+            time: "15:00",
+            location: `${searchCity} Station`,
+            details: "Sample train data",
+            passengers: 150
+          }
+        ],
+        buses: [
+          {
+            id: "sample-bus-1",
+            title: `Sample Bus - ${searchCity}`,
+            type: "bus" as const,
+            time: "15:30", 
+            location: `${searchCity} Terminal`,
+            details: "Sample bus data",
+            passengers: 50
+          }
+        ],
+        events: [
+          {
+            id: "sample-event-1",
+            title: `Sample Event - ${searchCity}`,
+            type: "event" as const,
+            time: "19:00",
+            location: `${searchCity} Center`,
+            details: "Sample event data",
+            passengers: 1000
+          }
+        ]
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch data when city changes
+  useEffect(() => {
+    fetchTransportData(searchCity);
+  }, [searchCity]);
 
   const getIcon = (type: string) => {
     switch (type) {
@@ -274,10 +317,10 @@ const CityInfo = () => {
   };
 
   const tabData = [
-    { id: "flights", label: "Flights", icon: Plane, data: cityData.flights, isTransport: true },
-    { id: "trains", label: "Trains", icon: Train, data: cityData.trains, isTransport: true },
-    { id: "buses", label: "Buses", icon: Bus, data: cityData.buses, isTransport: true },
-    { id: "events", label: "Events", icon: Calendar, data: cityData.events, isTransport: false },
+    { id: "flights", label: "Flights", icon: Plane, data: transportData.flights, isTransport: true },
+    { id: "trains", label: "Trains", icon: Train, data: transportData.trains, isTransport: true },
+    { id: "buses", label: "Buses", icon: Bus, data: transportData.buses, isTransport: true },
+    { id: "events", label: "Events", icon: Calendar, data: transportData.events, isTransport: false },
   ];
 
   return (
@@ -316,7 +359,15 @@ const CityInfo = () => {
         </div>
       </div>
 
-      <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 mt-4 sm:mt-6">
+        <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 mt-4 sm:mt-6">
+        {/* Loading indicator */}
+        {loading && (
+          <div className="flex items-center justify-center p-8">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            <span className="ml-2 text-muted-foreground">Loading transport data...</span>
+          </div>
+        )}
+        
         {/* Modern Tab Selectors */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-4 sm:mb-6">
           {tabData.map((tab) => (
