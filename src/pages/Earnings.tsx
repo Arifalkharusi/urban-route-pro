@@ -153,45 +153,45 @@ const Earnings = () => {
                   Add
                 </Button>
               </DialogTrigger>
-              <DialogContent className="mx-4 rounded-2xl">
-                <DialogHeader>
-                  <DialogTitle>Add New Earning</DialogTitle>
-                  <DialogDescription>
+              <DialogContent className="mx-2 sm:mx-4 rounded-2xl max-w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto">
+                <DialogHeader className="pb-4">
+                  <DialogTitle className="text-lg sm:text-xl">Add New Earning</DialogTitle>
+                  <DialogDescription className="text-sm sm:text-base">
                     Record earnings for a shift
                   </DialogDescription>
                 </DialogHeader>
                 
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="platform">Platform</Label>
+                <div className="space-y-6">
+                  <div className="space-y-3">
+                    <Label htmlFor="platform" className="text-sm font-medium">Platform</Label>
                     <Select value={formData.platform} onValueChange={(value) => setFormData({...formData, platform: value})}>
-                      <SelectTrigger className="rounded-xl">
+                      <SelectTrigger className="rounded-xl h-12 text-base">
                         <SelectValue placeholder="Select platform" />
                       </SelectTrigger>
-                      <SelectContent className="bg-background border shadow-lg">
+                      <SelectContent className="bg-background border shadow-lg max-h-60">
                         {allPlatforms.map((platform) => (
-                          <SelectItem key={platform} value={platform}>{platform}</SelectItem>
+                          <SelectItem key={platform} value={platform} className="text-base py-3">{platform}</SelectItem>
                         ))}
-                        <SelectItem value="custom">Add Custom Platform</SelectItem>
+                        <SelectItem value="custom" className="text-base py-3">Add Custom Platform</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   
                   {formData.platform === "custom" && (
-                    <div className="space-y-2">
-                      <Label htmlFor="customPlatform">Custom Platform Name</Label>
+                    <div className="space-y-3">
+                      <Label htmlFor="customPlatform" className="text-sm font-medium">Custom Platform Name</Label>
                       <Input
                         id="customPlatform"
                         value={formData.customPlatform}
                         onChange={(e) => setFormData({...formData, customPlatform: e.target.value})}
                         placeholder="e.g., Local Taxi Company"
-                        className="rounded-xl"
+                        className="rounded-xl h-12 text-base"
                       />
                     </div>
                   )}
                   
-                  <div className="space-y-2">
-                    <Label htmlFor="amount">Total Earning ($)</Label>
+                  <div className="space-y-3">
+                    <Label htmlFor="amount" className="text-sm font-medium">Total Earning ($)</Label>
                     <Input
                       id="amount"
                       type="number"
@@ -199,24 +199,24 @@ const Earnings = () => {
                       value={formData.amount}
                       onChange={(e) => setFormData({...formData, amount: e.target.value})}
                       placeholder="0.00"
-                      className="rounded-xl"
+                      className="rounded-xl h-12 text-base"
                     />
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="trips">Number of Trips</Label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                    <div className="space-y-3">
+                      <Label htmlFor="trips" className="text-sm font-medium">Number of Trips</Label>
                       <Input
                         id="trips"
                         type="number"
                         value={formData.trips}
                         onChange={(e) => setFormData({...formData, trips: e.target.value})}
                         placeholder="0"
-                        className="rounded-xl"
+                        className="rounded-xl h-12 text-base"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="hours">Hours Worked</Label>
+                    <div className="space-y-3">
+                      <Label htmlFor="hours" className="text-sm font-medium">Hours Worked</Label>
                       <Input
                         id="hours"
                         type="number"
@@ -224,25 +224,25 @@ const Earnings = () => {
                         value={formData.hours}
                         onChange={(e) => setFormData({...formData, hours: e.target.value})}
                         placeholder="0.0"
-                        className="rounded-xl"
+                        className="rounded-xl h-12 text-base"
                       />
                     </div>
                   </div>
                   
-                  <div className="space-y-2">
-                    <Label htmlFor="date">Date</Label>
+                  <div className="space-y-3">
+                    <Label htmlFor="date" className="text-sm font-medium">Date</Label>
                     <Input
                       id="date"
                       type="date"
                       value={formData.date}
                       onChange={(e) => setFormData({...formData, date: e.target.value})}
-                      className="rounded-xl"
+                      className="rounded-xl h-12 text-base"
                     />
                   </div>
                   
                   <Button 
                     onClick={handleAddEarning}
-                    className="w-full bg-gradient-primary hover:opacity-90 rounded-xl"
+                    className="w-full bg-gradient-primary hover:opacity-90 rounded-xl h-12 text-base font-medium mt-6"
                   >
                     Add Earning
                   </Button>

@@ -174,23 +174,23 @@ const Expenses = () => {
                   Add
                 </Button>
               </DialogTrigger>
-              <DialogContent className="mx-4 rounded-2xl">
-                <DialogHeader>
-                  <DialogTitle>Add New Expense</DialogTitle>
-                  <DialogDescription>
+              <DialogContent className="mx-2 sm:mx-4 rounded-2xl max-w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto">
+                <DialogHeader className="pb-4">
+                  <DialogTitle className="text-lg sm:text-xl">Add New Expense</DialogTitle>
+                  <DialogDescription className="text-sm sm:text-base">
                     Record a business expense or calculate mileage
                   </DialogDescription>
                 </DialogHeader>
                 
-                <Tabs value={expenseType} onValueChange={(value) => setExpenseType(value as "manual" | "mileage")}>
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="manual">Manual Entry</TabsTrigger>
-                    <TabsTrigger value="mileage">Mileage</TabsTrigger>
+                <Tabs value={expenseType} onValueChange={(value) => setExpenseType(value as "manual" | "mileage")} className="w-full">
+                  <TabsList className="grid w-full grid-cols-2 mb-6">
+                    <TabsTrigger value="manual" className="text-sm">Manual Entry</TabsTrigger>
+                    <TabsTrigger value="mileage" className="text-sm">Mileage</TabsTrigger>
                   </TabsList>
                   
-                  <TabsContent value="manual" className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="amount">Amount ($)</Label>
+                  <TabsContent value="manual" className="space-y-6">
+                    <div className="space-y-3">
+                      <Label htmlFor="amount" className="text-sm font-medium">Amount ($)</Label>
                       <Input
                         id="amount"
                         type="number"
@@ -198,46 +198,46 @@ const Expenses = () => {
                         placeholder="0.00"
                         value={newExpense.amount}
                         onChange={(e) => setNewExpense({...newExpense, amount: e.target.value})}
-                        className="rounded-xl"
+                        className="rounded-xl h-12 text-base"
                       />
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="category">Category</Label>
+                    <div className="space-y-3">
+                      <Label htmlFor="category" className="text-sm font-medium">Category</Label>
                       <Select value={newExpense.category} onValueChange={(value) => setNewExpense({...newExpense, category: value})}>
-                        <SelectTrigger className="rounded-xl">
+                        <SelectTrigger className="rounded-xl h-12 text-base">
                           <SelectValue placeholder="Select category" />
                         </SelectTrigger>
-                        <SelectContent className="bg-background border shadow-lg">
+                        <SelectContent className="bg-background border shadow-lg max-h-60">
                           {allCategories.map((category) => (
-                            <SelectItem key={category} value={category}>{category}</SelectItem>
+                            <SelectItem key={category} value={category} className="text-base py-3">{category}</SelectItem>
                           ))}
-                          <SelectItem value="custom">Add Custom Category</SelectItem>
+                          <SelectItem value="custom" className="text-base py-3">Add Custom Category</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     
                     {newExpense.category === "custom" && (
-                      <div className="space-y-2">
-                        <Label htmlFor="customCategory">Custom Category Name</Label>
+                      <div className="space-y-3">
+                        <Label htmlFor="customCategory" className="text-sm font-medium">Custom Category Name</Label>
                         <Input
                           id="customCategory"
                           value={newExpense.customCategory}
                           onChange={(e) => setNewExpense({...newExpense, customCategory: e.target.value})}
                           placeholder="e.g., Car Wash, Phone Bill"
-                          className="rounded-xl"
+                          className="rounded-xl h-12 text-base"
                         />
                       </div>
                     )}
 
-                     <div className="space-y-2">
-                       <Label htmlFor="date">Date</Label>
+                     <div className="space-y-3">
+                       <Label htmlFor="date" className="text-sm font-medium">Date</Label>
                        <Popover>
                          <PopoverTrigger asChild>
                            <Button
                              variant="outline"
                              className={cn(
-                               "w-full justify-start text-left font-normal rounded-xl",
+                               "w-full justify-start text-left font-normal rounded-xl h-12 text-base",
                                !selectedDate && "text-muted-foreground"
                              )}
                            >
@@ -257,21 +257,21 @@ const Expenses = () => {
                        </Popover>
                      </div>
 
-                     <div className="space-y-2">
-                       <Label htmlFor="description">Description</Label>
+                     <div className="space-y-3">
+                       <Label htmlFor="description" className="text-sm font-medium">Description</Label>
                        <Input
                          id="description"
                          placeholder="Optional description"
                          value={newExpense.description}
                          onChange={(e) => setNewExpense({...newExpense, description: e.target.value})}
-                         className="rounded-xl"
+                         className="rounded-xl h-12 text-base"
                        />
                      </div>
                   </TabsContent>
 
-                  <TabsContent value="mileage" className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="miles">Miles Driven</Label>
+                  <TabsContent value="mileage" className="space-y-6">
+                    <div className="space-y-3">
+                      <Label htmlFor="miles" className="text-sm font-medium">Miles Driven</Label>
                       <Input
                         id="miles"
                         type="number"
@@ -279,19 +279,19 @@ const Expenses = () => {
                         placeholder="0.0"
                         value={newExpense.miles}
                         onChange={(e) => setNewExpense({...newExpense, miles: e.target.value})}
-                        className="rounded-xl"
+                        className="rounded-xl h-12 text-base"
                       />
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="costPerMile">Cost per Mile ($)</Label>
+                    <div className="space-y-3">
+                      <Label htmlFor="costPerMile" className="text-sm font-medium">Cost per Mile ($)</Label>
                       <Input
                         id="costPerMile"
                         type="number"
                         step="0.001"
                         value={newExpense.costPerMile}
                         onChange={(e) => setNewExpense({...newExpense, costPerMile: e.target.value})}
-                        className="rounded-xl"
+                        className="rounded-xl h-12 text-base"
                       />
                       <p className="text-xs text-muted-foreground">
                         Standard IRS rate: $0.545/mile
@@ -299,8 +299,8 @@ const Expenses = () => {
                     </div>
 
                     {newExpense.miles && newExpense.costPerMile && (
-                      <div className="bg-accent p-3 rounded-xl">
-                        <div className="flex items-center gap-2 mb-1">
+                      <div className="bg-accent p-4 rounded-xl">
+                        <div className="flex items-center gap-2 mb-2">
                           <Calculator className="w-4 h-4 text-primary" />
                           <span className="text-sm font-medium">Calculated Amount</span>
                         </div>
@@ -351,7 +351,7 @@ const Expenses = () => {
 
                   <Button 
                     onClick={handleAddExpense}
-                    className="w-full bg-gradient-primary hover:opacity-90 rounded-xl"
+                    className="w-full bg-gradient-primary hover:opacity-90 rounded-xl h-12 text-base font-medium mt-6"
                   >
                     Add Expense
                   </Button>

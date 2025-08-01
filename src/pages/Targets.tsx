@@ -322,12 +322,12 @@ const Targets = () => {
 
       {/* Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="mx-4 rounded-2xl">
-          <DialogHeader>
-            <DialogTitle>
+        <DialogContent className="mx-2 sm:mx-4 rounded-2xl max-w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto">
+          <DialogHeader className="pb-4">
+            <DialogTitle className="text-lg sm:text-xl">
               {editingTarget ? "Edit Target" : "Set New Target"}
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-sm sm:text-base">
               {editingTarget 
                 ? "Update your income target"
                 : "Set a new income goal to track your progress"
@@ -335,9 +335,9 @@ const Targets = () => {
             </DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="target-amount">Target Amount ($)</Label>
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <Label htmlFor="target-amount" className="text-sm font-medium">Target Amount ($)</Label>
               <Input
                 id="target-amount"
                 type="number"
@@ -345,32 +345,32 @@ const Targets = () => {
                 placeholder="0.00"
                 value={newTarget.amount}
                 onChange={(e) => setNewTarget({...newTarget, amount: e.target.value})}
-                className="rounded-xl"
+                className="rounded-xl h-12 text-base"
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="target-period">Time Period</Label>
+            <div className="space-y-3">
+              <Label htmlFor="target-period" className="text-sm font-medium">Time Period</Label>
               <Select 
                 value={newTarget.period} 
                 onValueChange={(value: "daily" | "weekly" | "monthly") => 
                   setNewTarget({...newTarget, period: value})
                 }
               >
-                <SelectTrigger className="rounded-xl">
+                <SelectTrigger className="rounded-xl h-12 text-base">
                   <SelectValue placeholder="Select period" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="daily">Daily</SelectItem>
-                  <SelectItem value="weekly">Weekly</SelectItem>
-                  <SelectItem value="monthly">Monthly</SelectItem>
+                <SelectContent className="max-h-60">
+                  <SelectItem value="daily" className="text-base py-3">Daily</SelectItem>
+                  <SelectItem value="weekly" className="text-base py-3">Weekly</SelectItem>
+                  <SelectItem value="monthly" className="text-base py-3">Monthly</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <Button 
               onClick={handleSaveTarget}
-              className="w-full bg-gradient-primary hover:opacity-90 rounded-xl"
+              className="w-full bg-gradient-primary hover:opacity-90 rounded-xl h-12 text-base font-medium mt-6"
               disabled={!newTarget.amount}
             >
               {editingTarget ? "Update Target" : "Create Target"}
