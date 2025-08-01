@@ -1,25 +1,15 @@
 import { useState } from "react";
 import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import GradientCard from "@/components/GradientCard";
 import MobileNavigation from "@/components/MobileNavigation";
-import { TrendingUp, TrendingDown, Target, DollarSign, BarChart3, Activity, CalendarIcon, Filter } from "lucide-react";
+import { TrendingUp, TrendingDown, Target, DollarSign, BarChart3, Activity } from "lucide-react";
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
-import type { DateRange } from "react-day-picker";
 
 const Dashboard = () => {
   const [todayEarnings] = useState(247.50);
   const [todayExpenses] = useState(45.20);
   const [weeklyTarget] = useState(1500);
   const [weeklyProgress] = useState(980);
-  const [dateRange, setDateRange] = useState<DateRange | undefined>({
-    from: new Date(new Date().setDate(new Date().getDate() - 7)),
-    to: new Date()
-  });
 
   const progressPercentage = (weeklyProgress / weeklyTarget) * 100;
   const netIncome = todayEarnings - todayExpenses;
@@ -69,13 +59,13 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Today's Summary */}
+        {/* This Week's Summary */}
         <GradientCard variant="card" className="bg-white/10 backdrop-blur-sm border-white/20">
           <div className="flex justify-between items-start sm:items-center mb-4 sm:mb-6">
             <div className="flex-1 min-w-0">
-              <h2 className="text-lg sm:text-xl font-bold text-white">Today's Summary</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-white">This Week's Performance</h2>
               <p className="text-white/70 text-xs sm:text-sm mt-1">
-                {new Date().toLocaleDateString('en-US', { 
+                Monday - {new Date().toLocaleDateString('en-US', { 
                   weekday: 'long', 
                   month: 'short', 
                   day: 'numeric' 
@@ -93,10 +83,10 @@ const Dashboard = () => {
                 <div className="w-7 h-7 sm:w-8 sm:h-8 bg-success/20 rounded-lg flex items-center justify-center">
                   <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-success" />
                 </div>
-                <span className="text-white/80 text-xs sm:text-sm font-medium">Net Income</span>
+                <span className="text-white/80 text-xs sm:text-sm font-medium">Weekly Net</span>
               </div>
-              <p className="text-xl sm:text-2xl font-bold text-white">${netIncome.toFixed(2)}</p>
-              <p className="text-success text-xs">+12% vs yesterday</p>
+              <p className="text-xl sm:text-2xl font-bold text-white">${(weeklyProgress - 234).toFixed(2)}</p>
+              <p className="text-success text-xs">+12% vs last week</p>
             </div>
             
             <div className="bg-white/10 rounded-xl p-3 sm:p-4">
@@ -104,73 +94,31 @@ const Dashboard = () => {
                 <div className="w-7 h-7 sm:w-8 sm:h-8 bg-primary/20 rounded-lg flex items-center justify-center">
                   <Activity className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                 </div>
-                <span className="text-white/80 text-xs sm:text-sm font-medium">Trips</span>
+                <span className="text-white/80 text-xs sm:text-sm font-medium">Total Trips</span>
               </div>
-              <p className="text-xl sm:text-2xl font-bold text-white">14</p>
-              <p className="text-white/60 text-xs">8.5 hours active</p>
+              <p className="text-xl sm:text-2xl font-bold text-white">87</p>
+              <p className="text-white/60 text-xs">42.5 hours active</p>
             </div>
           </div>
           
           <div className="grid grid-cols-3 gap-2 sm:gap-3">
             <div className="text-center">
               <p className="text-white/60 text-xs mb-1">Earnings</p>
-              <p className="text-sm sm:text-lg font-semibold text-white">${todayEarnings.toFixed(2)}</p>
+              <p className="text-sm sm:text-lg font-semibold text-white">${weeklyProgress.toFixed(2)}</p>
             </div>
             <div className="text-center">
-              <p className="text-white/60 text-xs mb-1">Per Trip</p>
-              <p className="text-sm sm:text-lg font-semibold text-white">${(todayEarnings / 14).toFixed(2)}</p>
+              <p className="text-white/60 text-xs mb-1">Avg/Day</p>
+              <p className="text-sm sm:text-lg font-semibold text-white">${(weeklyProgress / 7).toFixed(2)}</p>
             </div>
             <div className="text-center">
               <p className="text-white/60 text-xs mb-1">Distance</p>
-              <p className="text-sm sm:text-lg font-semibold text-white">127 mi</p>
+              <p className="text-sm sm:text-lg font-semibold text-white">892 mi</p>
             </div>
           </div>
         </GradientCard>
       </div>
 
-      <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 mt-4 sm:mt-6">
-        {/* Date Filter */}
-        <GradientCard>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
-            <h3 className="font-semibold text-base sm:text-lg text-primary">Filter by Date Range</h3>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "justify-start text-left font-normal w-full sm:w-auto text-sm",
-                    !dateRange.from && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {dateRange.from ? (
-                    dateRange.to ? (
-                      <>
-                        {format(dateRange.from, "MMM dd")} -{" "}
-                        {format(dateRange.to, "MMM dd, y")}
-                      </>
-                    ) : (
-                      format(dateRange.from, "LLL dd, y")
-                    )
-                  ) : (
-                    <span>Pick a date range</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  initialFocus
-                  mode="range"
-                  defaultMonth={dateRange.from}
-                  selected={dateRange}
-                  onSelect={setDateRange}
-                  numberOfMonths={1}
-                  className="p-3 pointer-events-auto"
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-        </GradientCard>
+      <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 mt-4 sm:mt-6">{/* Removed date filter - everything measures this week */}
         {/* Weekly Target Progress */}
         <GradientCard>
           <div className="space-y-3 sm:space-y-4">
@@ -259,11 +207,11 @@ const Dashboard = () => {
           </div>
         </GradientCard>
 
-        {/* Daily Hours Performance */}
+        {/* Peak Hours This Week */}
         <GradientCard>
           <div className="space-y-3 sm:space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-base sm:text-lg text-primary">Peak Hours Today</h3>
+              <h3 className="font-semibold text-base sm:text-lg text-primary">Peak Hours This Week</h3>
               <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
             </div>
             
@@ -330,10 +278,10 @@ const Dashboard = () => {
           </GradientCard>
         </div>
 
-        {/* Expense Breakdown Chart */}
+        {/* Weekly Expense Breakdown */}
         <GradientCard>
           <div className="space-y-3 sm:space-y-4">
-            <h3 className="font-semibold text-base sm:text-lg text-primary">Expense Breakdown</h3>
+            <h3 className="font-semibold text-base sm:text-lg text-primary">Weekly Expense Breakdown</h3>
             
             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
               <div className="h-32 w-32 sm:h-40 sm:w-40 mx-auto sm:mx-0">
