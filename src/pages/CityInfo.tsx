@@ -220,14 +220,7 @@ const CityInfo = () => {
         console.error('Bus API error:', error);
       }
 
-      // Fallback to realistic data if APIs fail
-      if (flightData.flights.length === 0 && trainData.trains.length === 0 && busData.buses.length === 0) {
-        console.log('No real data found, falling back to realistic generated data');
-        const fallbackData = generateRealisticData(city);
-        flightData = { flights: fallbackData.flights };
-        trainData = { trains: fallbackData.trains };
-        busData = { buses: fallbackData.buses };
-      }
+      // Only use real API data - no fallback
 
       // Events data
       const eventsData = {
@@ -265,8 +258,8 @@ const CityInfo = () => {
       const hasRealData = flightData.flights.length > 0 || trainData.trains.length > 0 || busData.buses.length > 0;
       
       toast({
-        title: hasRealData ? "Real transport data loaded" : "Using realistic data",
-        description: hasRealData ? `Live API data for ${city}` : `APIs unavailable, showing realistic ${city} data`,
+        title: hasRealData ? "Live transport data loaded" : "No live data available",
+        description: hasRealData ? `Real API data for ${city}` : `No live transport data found for ${city}`,
         variant: hasRealData ? "default" : "destructive"
       });
 
@@ -281,18 +274,17 @@ const CityInfo = () => {
     } catch (error) {
       console.error('Error fetching transport data:', error);
       
-      // Fall back to realistic generated data
-      const fallbackData = generateRealisticData(city);
+      // Show empty data when APIs fail - no fallback
       setTransportData({
-        flights: fallbackData.flights,
-        trains: fallbackData.trains,
-        buses: fallbackData.buses,
-        events: fallbackData.events
+        flights: [],
+        trains: [],
+        buses: [],
+        events: []
       });
       
       toast({
-        title: "Using realistic data",
-        description: "APIs unavailable, showing realistic transport data",
+        title: "Failed to load live data",
+        description: "Unable to fetch live transport data from APIs",
         variant: "destructive"
       });
     } finally {
@@ -300,111 +292,6 @@ const CityInfo = () => {
     }
   };
 
-  // Generate realistic transport data as fallback
-  const generateRealisticData = (city: string) => {
-    const config = cityConfig[city as keyof typeof cityConfig];
-    const now = new Date();
-
-    // Generate realistic flight arrivals
-    const flights = Array.from({ length: 6 }, (_, i) => {
-      const arrivalTime = new Date(now.getTime() + (i * 20 + 10) * 60000);
-      const airlines = ['British Airways', 'Ryanair', 'EasyJet', 'Virgin Atlantic', 'Jet2', 'Wizz Air'];
-      const origins = ['London Heathrow', 'Dublin', 'Amsterdam', 'Paris CDG', 'Frankfurt', 'Barcelona'];
-      const codes = ['BA', 'FR', 'U2', 'VS', 'LS', 'W6'];
-      
-      const airline = airlines[i % airlines.length];
-      const origin = origins[i % origins.length];
-      const code = codes[i % codes.length];
-      
-      return {
-        id: `flight-${i}`,
-        title: `${airline} ${code}${(Math.floor(Math.random() * 900) + 100)} - ${origin}`,
-        type: 'flight' as const,
-        time: arrivalTime.toLocaleTimeString('en-US', { 
-          hour: '2-digit', 
-          minute: '2-digit', 
-          hour12: false 
-        }),
-        location: `${config.airportName} Terminal ${Math.floor(Math.random() * 3) + 1}`,
-        details: `Arrival from ${origin}`,
-        passengers: Math.floor(Math.random() * 150) + 100,
-        terminal: `Terminal ${Math.floor(Math.random() * 3) + 1}`
-      };
-    });
-
-    // Generate realistic train services
-    const trains = Array.from({ length: 8 }, (_, i) => {
-      const departureTime = new Date(now.getTime() + (i * 15 + 5) * 60000);
-      const operators = ['Avanti West Coast', 'CrossCountry', 'Northern Rail', 'West Midlands Railway'];
-      const destinations = ['London Euston', 'Edinburgh', 'Birmingham', 'Manchester Piccadilly'];
-      
-      const operator = operators[i % operators.length];
-      const destination = destinations[i % destinations.length];
-      
-      return {
-        id: `train-${i}`,
-        title: `${operator} - ${destination}`,
-        type: 'train' as const,
-        time: departureTime.toLocaleTimeString('en-US', { 
-          hour: '2-digit', 
-          minute: '2-digit', 
-          hour12: false 
-        }),
-        location: config.railHub,
-        details: `Direct service to ${destination}`,
-        passengers: Math.floor(Math.random() * 200) + 100
-      };
-    });
-
-    // Generate realistic coach services
-    const buses = Array.from({ length: 6 }, (_, i) => {
-      const departureTime = new Date(now.getTime() + (i * 30 + 15) * 60000);
-      const operators = ['National Express', 'Megabus', 'FlixBus', 'Stagecoach'];
-      const destinations = ['London Victoria', 'Edinburgh', 'Cardiff', 'Leeds'];
-      
-      const operator = operators[i % operators.length];
-      const destination = destinations[i % destinations.length];
-      
-      return {
-        id: `bus-${i}`,
-        title: `${operator} - ${destination}`,
-        type: 'bus' as const,
-        time: departureTime.toLocaleTimeString('en-US', { 
-          hour: '2-digit', 
-          minute: '2-digit', 
-          hour12: false 
-        }),
-        location: config.coachStation,
-        details: `Express service to ${destination}`,
-        passengers: Math.floor(Math.random() * 50) + 30
-      };
-    });
-
-    const events = [
-      {
-        id: "event-1",
-        title: city === "Birmingham" ? "Birmingham Symphony Hall Concert" : 
-              city === "Manchester" ? "Manchester Arena Event" : "Liverpool Philharmonic Concert",
-        type: "event" as const,
-        time: "19:30",
-        location: city === "Birmingham" ? "Symphony Hall Birmingham" :
-                 city === "Manchester" ? "AO Arena Manchester" : "Liverpool Philharmonic Hall",
-        details: "Evening performance - expect high footfall",
-        passengers: city === "Manchester" ? 21000 : 2000
-      },
-      {
-        id: "event-2",
-        title: `${city} Business Conference`,
-        type: "event" as const, 
-        time: "09:00",
-        location: `${city} International Convention Centre`,
-        details: "Major business networking event",
-        passengers: 1500
-      }
-    ];
-
-    return { flights, trains, buses, events };
-  };
 
 
   // Fetch data when city changes
