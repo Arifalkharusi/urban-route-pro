@@ -176,85 +176,7 @@ const CityInfo = () => {
         console.warn('Bus API error:', error);
       }
 
-      
-      // If APIs fail, provide fallback data
-      if (flightData.flights.length === 0) {
-        flightData = {
-          flights: [
-            {
-              id: "fallback-flight-1",
-              title: `British Airways - London Heathrow`,
-              type: "flight" as const,
-              time: new Date(Date.now() + 45 * 60000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
-              location: config.airportName,
-              details: "Domestic connection",
-              passengers: 180
-            },
-            {
-              id: "fallback-flight-2",
-              title: `Ryanair - Dublin`,
-              type: "flight" as const,
-              time: new Date(Date.now() + 75 * 60000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
-              location: config.airportName,
-              details: "International arrival",
-              passengers: 189
-            }
-          ]
-        };
-      }
-
-      if (trainData.trains.length === 0) {
-        trainData = {
-          trains: [
-            {
-              id: "fallback-train-1",
-              title: `Avanti West Coast - London Euston`,
-              type: "train" as const,
-              time: new Date(Date.now() + 30 * 60000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
-              location: config.railHub,
-              details: "Direct service to London",
-              passengers: 400
-            },
-            {
-              id: "fallback-train-2", 
-              title: `CrossCountry - ${city === "Birmingham" ? "Edinburgh" : "Birmingham"}`,
-              type: "train" as const,
-              time: new Date(Date.now() + 45 * 60000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
-              location: config.railHub,
-              details: "Inter-city service",
-              passengers: 350
-            }
-          ]
-        };
-      }
-      
-      if (busData.buses.length === 0) {
-        busData = {
-          buses: [
-            {
-              id: "fallback-bus-1",
-              title: `National Express - London Victoria`,
-              type: "bus" as const,
-              time: new Date(Date.now() + 15 * 60000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
-              location: config.coachStation,
-              details: "Direct coach to London",
-              passengers: 55
-            },
-            {
-              id: "fallback-bus-2",
-              title: `Megabus - Edinburgh`,
-              type: "bus" as const, 
-              time: new Date(Date.now() + 90 * 60000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
-              location: config.coachStation,
-              details: "Budget long-distance service",
-              passengers: 49
-            }
-          ]
-        };
-      }
-
-      
-      // UK-specific events data
+      // UK-specific events data (keeping minimal events as these aren't from external APIs)
       const eventsData = {
         events: [
           {
@@ -291,57 +213,16 @@ const CityInfo = () => {
       console.error('Error fetching transport data:', error);
       toast({
         title: "Error fetching data",
-        description: "Using fallback data. API might be temporarily unavailable.",
+        description: "Unable to fetch live transport data. Please try again later.",
         variant: "destructive"
       });
       
-      // Fallback to sample data
-      const fallbackConfig = cityConfig[searchCity as keyof typeof cityConfig];
+      // Set empty data on error - no fallback data
       setTransportData({
-        flights: [
-          {
-            id: "sample-flight-1",
-            title: `British Airways - London Heathrow`,
-            type: "flight" as const,
-            time: "14:30",
-            location: fallbackConfig?.airportName || `${searchCity} Airport`,
-            details: "Domestic connection",
-            passengers: 180
-          }
-        ],
-        trains: [
-          {
-            id: "sample-train-1", 
-            title: `West Midlands Railway - Local Service`,
-            type: "train" as const,
-            time: "15:00",
-            location: fallbackConfig?.railHub || `${searchCity} Station`,
-            details: "Regional connection",
-            passengers: 150
-          }
-        ],
-        buses: [
-          {
-            id: "sample-bus-1",
-            title: `National Express - London`,
-            type: "bus" as const,
-            time: "15:30", 
-            location: fallbackConfig?.coachStation || `${searchCity} Coach Station`,
-            details: "Express coach service",
-            passengers: 50
-          }
-        ],
-        events: [
-          {
-            id: "sample-event-1",
-            title: `${searchCity} Music Festival`,
-            type: "event" as const,
-            time: "19:00",
-            location: `${searchCity} Arena`,
-            details: "Major music event",
-            passengers: 15000
-          }
-        ]
+        flights: [],
+        trains: [],
+        buses: [],
+        events: []
       });
     } finally {
       setLoading(false);
