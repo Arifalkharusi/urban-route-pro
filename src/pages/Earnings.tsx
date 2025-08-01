@@ -176,6 +176,15 @@ const Earnings = () => {
     }
   };
 
+  const getPlatformIcon = (platform: string) => {
+    switch (platform.toLowerCase()) {
+      case 'uber': return <Car className="w-4 h-4" />;
+      case 'bolt': return <Car className="w-4 h-4" />;
+      case 'lyft': return <Car className="w-4 h-4" />;
+      default: return <DollarSign className="w-4 h-4" />;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-background pb-20">
       {/* Header */}
@@ -411,105 +420,86 @@ const Earnings = () => {
                     </div>
                   </div>
                   
-                   <div className="space-y-3 sm:space-y-2">
+                   <div className="space-y-4">
                      {platformEarnings.map((earning) => (
-                       <GradientCard key={earning.id} className="hover:shadow-soft transition-shadow">
-                         {/* Edit and Delete buttons - Top of card */}
-                         <div className="flex justify-end gap-2 mb-3">
-                           <Button
-                             variant="ghost"
-                             size="sm"
-                             onClick={() => openEditDialog(earning)}
-                             className="h-8 w-8 p-0 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full"
-                           >
-                             <Edit3 className="w-4 h-4" />
-                           </Button>
-                           <Button
-                             variant="ghost"
-                             size="sm"
-                             onClick={() => openDeleteDialog(earning.id)}
-                             className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-full"
-                           >
-                             <Trash2 className="w-4 h-4" />
-                           </Button>
+                       <GradientCard key={earning.id} className="hover:shadow-elegant transition-all duration-300 animate-fade-in p-4 sm:p-6">
+                         {/* Mobile-optimized layout */}
+                         <div className="space-y-4">
+                           {/* Top section - Platform info and action buttons */}
+                           <div className="flex items-center justify-between">
+                             <div className="flex items-center gap-3">
+                               <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${
+                                 platform === "Uber" 
+                                   ? "bg-gradient-to-br from-black to-gray-800 text-white"
+                                   : platform === "Bolt"
+                                   ? "bg-gradient-to-br from-green-500 to-green-600 text-white"
+                                   : platform === "Lyft"
+                                   ? "bg-gradient-to-br from-pink-500 to-pink-600 text-white"
+                                   : "bg-gradient-to-br from-primary to-primary/80 text-white"
+                               }`}>
+                                 {getPlatformIcon(platform)}
+                               </div>
+                               <div>
+                                 <h3 className="font-bold text-base text-primary">{platform}</h3>
+                                 <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                   <CalendarIcon className="w-3 h-3" />
+                                   {new Date(earning.date).toLocaleDateString()}
+                                 </p>
+                               </div>
+                             </div>
+                             
+                             <div className="flex items-center gap-2">
+                               <Button
+                                 variant="ghost"
+                                 size="sm"
+                                 onClick={() => openEditDialog(earning)}
+                                 className="h-10 w-10 p-0 hover:bg-muted/50 rounded-xl"
+                               >
+                                 <Edit3 className="w-4 h-4" />
+                               </Button>
+                               <Button
+                                 variant="ghost"
+                                 size="sm"
+                                 onClick={() => openDeleteDialog(earning.id)}
+                                 className="h-10 w-10 p-0 text-muted-foreground hover:text-destructive rounded-xl"
+                               >
+                                 <Trash2 className="w-4 h-4" />
+                               </Button>
+                             </div>
+                           </div>
+
+                           {/* Amount section */}
+                           <div className="bg-muted/20 rounded-2xl p-4">
+                             <div className="flex items-baseline justify-between mb-2">
+                               <div>
+                                 <span className="text-2xl font-bold text-success">${earning.amount.toFixed(2)}</span>
+                               </div>
+                               <div className="text-right">
+                                 <div className="flex items-center gap-1 text-xs text-success">
+                                   <TrendingUp className="w-3 h-3" />
+                                   ${(earning.amount / earning.hours).toFixed(2)}/hr
+                                 </div>
+                               </div>
+                             </div>
+                           </div>
+
+                           {/* Stats section - Mobile optimized grid */}
+                           <div className="grid grid-cols-3 gap-3">
+                             <div className="bg-success/5 border border-success/10 rounded-xl p-3 text-center">
+                               <div className="text-xs text-muted-foreground mb-1">Trips</div>
+                               <div className="font-bold text-base text-success">{earning.trips}</div>
+                             </div>
+                             <div className="bg-accent/5 border border-accent/10 rounded-xl p-3 text-center">
+                               <div className="text-xs text-muted-foreground mb-1">Hours</div>
+                               <div className="font-bold text-base text-accent">{earning.hours}h</div>
+                             </div>
+                             <div className="bg-primary/5 border border-primary/10 rounded-xl p-3 text-center">
+                               <div className="text-xs text-muted-foreground mb-1">Per Trip</div>
+                               <div className="font-bold text-base text-primary">${(earning.amount / earning.trips).toFixed(2)}</div>
+                             </div>
+                           </div>
                          </div>
-
-                         <div className="space-y-3 sm:space-y-0 sm:flex sm:justify-between sm:items-center">
-                          {/* Mobile: Top Section with Date and Amount */}
-                          <div className="flex justify-between items-start sm:hidden">
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                              <CalendarIcon className="w-3 h-3" />
-                              {new Date(earning.date).toLocaleDateString()}
-                            </div>
-                            <div className="text-right">
-                              <p className="text-lg font-bold text-success">
-                                ${earning.amount.toFixed(2)}
-                              </p>
-                              <div className="flex items-center gap-1 text-xs text-success">
-                                <TrendingUp className="w-3 h-3" />
-                                ${(earning.amount / earning.hours).toFixed(2)}/hr
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Mobile: Bottom Section with Stats */}
-                          <div className="grid grid-cols-3 gap-3 sm:hidden">
-                            <div className="bg-success/10 rounded-lg p-2 text-center">
-                              <div className="flex items-center justify-center gap-1 mb-1">
-                                <Users className="w-3 h-3 text-success" />
-                              </div>
-                              <p className="text-xs font-medium text-success">{earning.trips}</p>
-                              <p className="text-xs text-muted-foreground">trips</p>
-                            </div>
-                            <div className="bg-accent/10 rounded-lg p-2 text-center">
-                              <div className="flex items-center justify-center gap-1 mb-1">
-                                <Clock className="w-3 h-3 text-accent" />
-                              </div>
-                              <p className="text-xs font-medium text-accent">{earning.hours}h</p>
-                              <p className="text-xs text-muted-foreground">hours</p>
-                            </div>
-                            <div className="bg-primary/10 rounded-lg p-2 text-center">
-                              <div className="flex items-center justify-center gap-1 mb-1">
-                                <DollarSign className="w-3 h-3 text-primary" />
-                              </div>
-                              <p className="text-xs font-medium text-primary">${(earning.amount / earning.trips).toFixed(2)}</p>
-                              <p className="text-xs text-muted-foreground">per trip</p>
-                            </div>
-                          </div>
-
-                          {/* Desktop: Original Layout */}
-                          <div className="hidden sm:flex sm:flex-1 sm:space-y-1">
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <CalendarIcon className="w-4 h-4" />
-                              {new Date(earning.date).toLocaleDateString()}
-                            </div>
-                            <div className="flex items-center gap-4 text-sm">
-                              <div className="flex items-center gap-1">
-                                <Users className="w-4 h-4 text-muted-foreground" />
-                                <span>{earning.trips} trips</span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <Clock className="w-4 h-4 text-muted-foreground" />
-                                <span>{earning.hours}h</span>
-                              </div>
-                              <div className="text-muted-foreground">
-                                ${(earning.amount / earning.trips).toFixed(2)}/trip
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Desktop: Amount Display */}
-                          <div className="hidden sm:block sm:text-right">
-                            <p className="text-lg sm:text-xl font-bold text-success">
-                              ${earning.amount.toFixed(2)}
-                            </p>
-                            <div className="flex items-center gap-1 text-sm text-success justify-end">
-                              <TrendingUp className="w-3 h-3" />
-                              ${(earning.amount / earning.hours).toFixed(2)}/hr
-                            </div>
-                          </div>
-                        </div>
-                      </GradientCard>
+                       </GradientCard>
                     ))}
                   </div>
                 </div>
