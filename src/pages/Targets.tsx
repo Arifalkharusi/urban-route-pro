@@ -218,8 +218,8 @@ const Targets = () => {
                           {getPeriodIcon(target.period)}
                         </div>
                         <div>
-                          <h3 className="font-bold text-lg capitalize">{target.period} Target</h3>
-                          <p className="text-sm text-muted-foreground flex items-center gap-1">
+                          <h3 className="font-bold text-base capitalize">{target.period} Target</h3>
+                          <p className="text-xs text-muted-foreground flex items-center gap-1">
                             <Clock className="w-3 h-3" />
                             {getRemainingTime(target.period, target.startDate)}
                           </p>
@@ -239,16 +239,16 @@ const Targets = () => {
                     {/* Amount section - Stacked for mobile */}
                     <div className="bg-muted/20 rounded-2xl p-4">
                       <div className="flex justify-between items-center mb-2">
-                        <span className="text-sm text-muted-foreground">Progress</span>
-                        <span className="text-sm font-medium">{progressPercentage.toFixed(1)}%</span>
+                        <span className="text-xs text-muted-foreground">Progress</span>
+                        <span className="text-xs font-medium">{progressPercentage.toFixed(1)}%</span>
                       </div>
                       
                       <div className="flex items-baseline justify-between mb-3">
                         <div>
-                          <span className="text-3xl font-bold text-foreground">${target.current.toFixed(2)}</span>
+                          <span className="text-2xl font-bold text-foreground">${target.current.toFixed(2)}</span>
                         </div>
                         <div className="text-right">
-                          <span className="text-lg text-muted-foreground">of ${target.amount.toFixed(2)}</span>
+                          <span className="text-base text-muted-foreground">of ${target.amount.toFixed(2)}</span>
                         </div>
                       </div>
 
@@ -259,9 +259,9 @@ const Targets = () => {
                       
                       <div className="flex justify-between items-center mt-2">
                         {!isCompleted ? (
-                          <span className="text-sm text-muted-foreground">${remaining.toFixed(2)} remaining</span>
+                          <span className="text-xs text-muted-foreground">${remaining.toFixed(2)} remaining</span>
                         ) : (
-                          <span className="text-sm text-success font-medium flex items-center gap-1">
+                          <span className="text-xs text-success font-medium flex items-center gap-1">
                             🎉 Target Achieved!
                           </span>
                         )}
@@ -274,11 +274,11 @@ const Targets = () => {
                         <>
                           <div className="bg-primary/5 border border-primary/10 rounded-xl p-3 text-center">
                             <div className="text-xs text-muted-foreground mb-1">Today's Earnings</div>
-                            <div className="font-bold text-lg text-primary">${target.current.toFixed(2)}</div>
+                            <div className="font-bold text-base text-primary">${target.current.toFixed(2)}</div>
                           </div>
                           <div className="bg-muted/30 rounded-xl p-3 text-center">
                             <div className="text-xs text-muted-foreground mb-1">Completion</div>
-                            <div className="font-bold text-lg">{progressPercentage.toFixed(0)}%</div>
+                            <div className="font-bold text-base">{progressPercentage.toFixed(0)}%</div>
                           </div>
                         </>
                       )}
@@ -287,11 +287,11 @@ const Targets = () => {
                         <>
                           <div className="bg-primary/5 border border-primary/10 rounded-xl p-3 text-center">
                             <div className="text-xs text-muted-foreground mb-1">Daily Avg</div>
-                            <div className="font-bold text-lg text-primary">${(target.current / 7).toFixed(2)}</div>
+                            <div className="font-bold text-base text-primary">${(target.current / 7).toFixed(2)}</div>
                           </div>
                           <div className="bg-muted/30 rounded-xl p-3 text-center">
                             <div className="text-xs text-muted-foreground mb-1">Daily Needed</div>
-                            <div className="font-bold text-lg">
+                            <div className="font-bold text-base">
                               ${remaining > 0 ? (remaining / Math.max(1, Math.ceil((new Date(target.startDate.getTime() + 7 * 24 * 60 * 60 * 1000).getTime() - new Date().getTime()) / (24 * 60 * 60 * 1000)))).toFixed(2) : "0.00"}
                             </div>
                           </div>
@@ -302,11 +302,11 @@ const Targets = () => {
                         <>
                           <div className="bg-primary/5 border border-primary/10 rounded-xl p-3 text-center">
                             <div className="text-xs text-muted-foreground mb-1">Weekly Avg</div>
-                            <div className="font-bold text-lg text-primary">${(target.current / 4).toFixed(2)}</div>
+                            <div className="font-bold text-base text-primary">${(target.current / 4).toFixed(2)}</div>
                           </div>
                           <div className="bg-muted/30 rounded-xl p-3 text-center">
                             <div className="text-xs text-muted-foreground mb-1">Daily Avg</div>
-                            <div className="font-bold text-lg">${(target.current / 30).toFixed(2)}</div>
+                            <div className="font-bold text-base">${(target.current / 30).toFixed(2)}</div>
                           </div>
                         </>
                       )}
