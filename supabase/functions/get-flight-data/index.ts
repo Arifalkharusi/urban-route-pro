@@ -19,6 +19,8 @@ serve(async (req) => {
       throw new Error('AERODATABOX_API_KEY not found in environment variables')
     }
 
+    console.log(`Fetching flight data for ${iataCode} on ${date}`)
+
     const response = await fetch(
       `https://aerodatabox.p.rapidapi.com/flights/airports/iata/${iataCode}/${date}?withLeg=false&direction=Arrival&withCancelled=false&withCodeshared=true&withCargo=false&withPrivate=false&withLocation=false`,
       {
@@ -30,10 +32,12 @@ serve(async (req) => {
     )
 
     if (!response.ok) {
+      console.error(`Flight API error: ${response.status}`)
       throw new Error(`Flight API error: ${response.status}`)
     }
 
     const data = await response.json()
+    console.log(`Found ${data.arrivals?.length || 0} flights`)
     
     // Transform the data to match our interface
     const transformedData = data.arrivals?.slice(0, 10)?.map((flight: any, index: number) => ({
@@ -66,7 +70,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         error: error.message,
-        flights: [] // Return empty array as fallback
+        flights: [] 
       }),
       { 
         status: 500, 

@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { from, to, type } = await req.json()
+    const { from, to, type, date, time } = await req.json()
     
     const appId = Deno.env.get('TRANSPORTAPI_APP_ID')
     const appKey = Deno.env.get('TRANSPORTAPI_APP_KEY')
@@ -21,11 +21,10 @@ serve(async (req) => {
       throw new Error('Transport API credentials not found in environment variables')
     }
 
-    const today = new Date().toISOString().split('T')[0]
-    const currentTime = new Date().toLocaleTimeString('en-GB', { hour12: false }).substring(0, 5)
-    
+    console.log(`Fetching ${type} data from ${from} to ${to} on ${date} at ${time}`)
+
     const response = await fetch(
-      `https://transportapi.com/v3/uk/public/journey/from/${encodeURIComponent(from)}/to/${encodeURIComponent(to)}/${today}/${currentTime}.json?app_id=${appId}&app_key=${appKey}&modes=${type}&limit=10`,
+      `https://transportapi.com/v3/uk/public/journey/from/${encodeURIComponent(from)}/to/${encodeURIComponent(to)}/${date}/${time}.json?app_id=${appId}&app_key=${appKey}&modes=${type}&limit=10`,
       {
         headers: {
           'Content-Type': 'application/json'
@@ -34,10 +33,12 @@ serve(async (req) => {
     )
 
     if (!response.ok) {
+      console.error(`Transport API error: ${response.status}`)
       throw new Error(`Transport API error: ${response.status}`)
     }
 
     const data = await response.json()
+    console.log(`Found ${data.routes?.length || 0} ${type} routes`)
     
     // Transform the data to match our interface
     const transformedData = data.routes?.slice(0, 8)?.map((route: any, index: number) => {
