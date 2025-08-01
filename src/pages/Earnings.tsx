@@ -111,134 +111,148 @@ const Earnings = () => {
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
-      <div className="bg-gradient-primary text-white p-6">
-        <div className="flex justify-between items-center mb-4">
+      <div className="bg-gradient-primary text-white p-6 pb-8">
+        <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-2xl font-bold">Earnings</h1>
             <p className="opacity-90">Track your income by platform</p>
           </div>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button 
-                size="sm" 
-                variant="secondary"
-                className="bg-white/20 hover:bg-white/30 text-white border-0"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="mx-4 rounded-2xl">
-              <DialogHeader>
-                <DialogTitle>Add New Earning</DialogTitle>
-                <DialogDescription>
-                  Record earnings for a shift
-                </DialogDescription>
-              </DialogHeader>
-              
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="platform">Platform</Label>
-                  <Select value={formData.platform} onValueChange={(value) => setFormData({...formData, platform: value})}>
-                    <SelectTrigger className="rounded-xl">
-                      <SelectValue placeholder="Select platform" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-background border shadow-lg">
-                      {allPlatforms.map((platform) => (
-                        <SelectItem key={platform} value={platform}>{platform}</SelectItem>
-                      ))}
-                      <SelectItem value="custom">Add Custom Platform</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                {formData.platform === "custom" && (
-                  <div className="space-y-2">
-                    <Label htmlFor="customPlatform">Custom Platform Name</Label>
-                    <Input
-                      id="customPlatform"
-                      value={formData.customPlatform}
-                      onChange={(e) => setFormData({...formData, customPlatform: e.target.value})}
-                      placeholder="e.g., Local Taxi Company"
-                      className="rounded-xl"
-                    />
-                  </div>
-                )}
-                
-                <div className="space-y-2">
-                  <Label htmlFor="amount">Total Earning ($)</Label>
-                  <Input
-                    id="amount"
-                    type="number"
-                    step="0.01"
-                    value={formData.amount}
-                    onChange={(e) => setFormData({...formData, amount: e.target.value})}
-                    placeholder="0.00"
-                    className="rounded-xl"
-                  />
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="trips">Number of Trips</Label>
-                    <Input
-                      id="trips"
-                      type="number"
-                      value={formData.trips}
-                      onChange={(e) => setFormData({...formData, trips: e.target.value})}
-                      placeholder="0"
-                      className="rounded-xl"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="hours">Hours Worked</Label>
-                    <Input
-                      id="hours"
-                      type="number"
-                      step="0.5"
-                      value={formData.hours}
-                      onChange={(e) => setFormData({...formData, hours: e.target.value})}
-                      placeholder="0.0"
-                      className="rounded-xl"
-                    />
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="date">Date</Label>
-                  <Input
-                    id="date"
-                    type="date"
-                    value={formData.date}
-                    onChange={(e) => setFormData({...formData, date: e.target.value})}
-                    className="rounded-xl"
-                  />
-                </div>
-                
-                <Button 
-                  onClick={handleAddEarning}
-                  className="w-full bg-gradient-primary hover:opacity-90 rounded-xl"
-                >
-                  Add Earning
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+            <DollarSign className="w-5 h-5" />
+          </div>
         </div>
 
-        {/* Today's Total */}
+        {/* Earnings Overview */}
         <GradientCard variant="card" className="bg-white/10 backdrop-blur-sm border-white/20">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-white/80 text-sm">Total Earnings</p>
-              <p className="text-2xl font-bold text-white">${totalEarnings.toFixed(2)}</p>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold text-white">Earnings Overview</h2>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button 
+                  size="sm" 
+                  variant="ghost"
+                  className="bg-white/20 hover:bg-white/30 text-white border-0 h-8 px-3"
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  Add
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="mx-4 rounded-2xl">
+                <DialogHeader>
+                  <DialogTitle>Add New Earning</DialogTitle>
+                  <DialogDescription>
+                    Record earnings for a shift
+                  </DialogDescription>
+                </DialogHeader>
+                
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="platform">Platform</Label>
+                    <Select value={formData.platform} onValueChange={(value) => setFormData({...formData, platform: value})}>
+                      <SelectTrigger className="rounded-xl">
+                        <SelectValue placeholder="Select platform" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border shadow-lg">
+                        {allPlatforms.map((platform) => (
+                          <SelectItem key={platform} value={platform}>{platform}</SelectItem>
+                        ))}
+                        <SelectItem value="custom">Add Custom Platform</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  {formData.platform === "custom" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="customPlatform">Custom Platform Name</Label>
+                      <Input
+                        id="customPlatform"
+                        value={formData.customPlatform}
+                        onChange={(e) => setFormData({...formData, customPlatform: e.target.value})}
+                        placeholder="e.g., Local Taxi Company"
+                        className="rounded-xl"
+                      />
+                    </div>
+                  )}
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="amount">Total Earning ($)</Label>
+                    <Input
+                      id="amount"
+                      type="number"
+                      step="0.01"
+                      value={formData.amount}
+                      onChange={(e) => setFormData({...formData, amount: e.target.value})}
+                      placeholder="0.00"
+                      className="rounded-xl"
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="trips">Number of Trips</Label>
+                      <Input
+                        id="trips"
+                        type="number"
+                        value={formData.trips}
+                        onChange={(e) => setFormData({...formData, trips: e.target.value})}
+                        placeholder="0"
+                        className="rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="hours">Hours Worked</Label>
+                      <Input
+                        id="hours"
+                        type="number"
+                        step="0.5"
+                        value={formData.hours}
+                        onChange={(e) => setFormData({...formData, hours: e.target.value})}
+                        placeholder="0.0"
+                        className="rounded-xl"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="date">Date</Label>
+                    <Input
+                      id="date"
+                      type="date"
+                      value={formData.date}
+                      onChange={(e) => setFormData({...formData, date: e.target.value})}
+                      className="rounded-xl"
+                    />
+                  </div>
+                  
+                  <Button 
+                    onClick={handleAddEarning}
+                    className="w-full bg-gradient-primary hover:opacity-90 rounded-xl"
+                  >
+                    Add Earning
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+          
+          <div className="grid grid-cols-3 gap-4">
+            <div className="text-center">
+              <p className="text-white/80 text-sm">Total</p>
+              <p className="text-xl font-bold text-white">${totalEarnings.toFixed(2)}</p>
             </div>
-            <DollarSign className="w-8 h-8 text-white/60" />
+            <div className="text-center">
+              <p className="text-white/80 text-sm">Platforms</p>
+              <p className="text-xl font-bold text-white">{Object.keys(groupedEarnings).length}</p>
+            </div>
+            <div className="text-center">
+              <p className="text-white/80 text-sm">Entries</p>
+              <p className="text-xl font-bold text-white">{earnings.length}</p>
+            </div>
           </div>
         </GradientCard>
       </div>
 
-      <div className="p-6">
+      <div className="p-6 space-y-6 -mt-4">
         {earnings.length === 0 ? (
           <GradientCard className="text-center py-8">
             <Car className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
