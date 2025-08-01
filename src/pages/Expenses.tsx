@@ -529,10 +529,14 @@ const Expenses = () => {
                       </div>
                       <div>
                         <h3 className="font-bold text-base text-primary">{expense.category}</h3>
-                        <p className="text-xs text-muted-foreground flex items-center gap-1">
-                          <Receipt className="w-3 h-3" />
-                          {formatTime(expense.date)}
-                        </p>
+                         <p className="text-xs text-muted-foreground flex items-center gap-1">
+                           <Receipt className="w-3 h-3" />
+                           {expense.date.toLocaleDateString('en-US', { 
+                             month: 'short', 
+                             day: 'numeric',
+                             year: expense.date.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
+                           })} • {formatTime(expense.date)}
+                         </p>
                       </div>
                     </div>
                     
