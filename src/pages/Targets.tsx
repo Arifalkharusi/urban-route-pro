@@ -322,7 +322,7 @@ const Targets = () => {
 
       {/* Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="mx-4 sm:mx-6 rounded-2xl w-[calc(100vw-2rem)] sm:w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <DialogContent className="mx-4 rounded-2xl w-[calc(100vw-2rem)] sm:w-full max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader className="pb-4">
             <DialogTitle className="text-lg sm:text-xl">
               {editingTarget ? "Edit Target" : "Set New Target"}
