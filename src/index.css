@@ -116,5 +116,24 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    /* Better mobile experience */
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  
+  /* Improve mobile scrolling */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Better mobile input experience */
+  input, select, textarea {
+    @apply text-base; /* Prevents zoom on iOS */
+  }
+  
+  @media (max-width: 640px) {
+    input, select, textarea {
+      font-size: 16px; /* Prevents zoom on iOS */
+    }
   }
 }

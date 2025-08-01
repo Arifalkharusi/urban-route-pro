@@ -283,20 +283,19 @@ const CityInfo = () => {
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
-      <div className="bg-gradient-primary text-white p-6">
-        <div className="space-y-4">
+      <div className="bg-gradient-primary text-white p-4 sm:p-6">
+        <div className="space-y-3 sm:space-y-4">
 
           {/* City Selection */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-white/90">Select City</label>
+            <label className="text-xs sm:text-sm font-medium text-white/90">Select City</label>
             <Select value={searchCity} onValueChange={setSearchCity}>
-              <SelectTrigger className="bg-white/10 border-white/20 text-white rounded-xl">
-                <SelectValue placeholder="Choose a city" />
-                <ChevronDown className="h-4 w-4 text-white/60" />
+              <SelectTrigger className="bg-white/10 border-white/20 text-white h-11 sm:h-10">
+                <SelectValue placeholder="Choose your city" />
               </SelectTrigger>
-              <SelectContent className="bg-background border shadow-lg z-[100]">
+              <SelectContent>
                 {cities.map((city) => (
-                  <SelectItem key={city} value={city} className="cursor-pointer">
+                  <SelectItem key={city} value={city}>
                     {city}
                   </SelectItem>
                 ))}
@@ -317,15 +316,15 @@ const CityInfo = () => {
         </div>
       </div>
 
-      <div className="p-6">
+      <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 -mt-4">
         {/* Modern Tab Selectors */}
-        <div className="grid grid-cols-4 gap-3 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-4 sm:mb-6">
           {tabData.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`
-                relative flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all duration-300 hover:scale-105
+                relative flex flex-col items-center gap-1.5 sm:gap-2 p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 transition-all duration-300 touch-manipulation
                 ${activeTab === tab.id 
                   ? 'border-primary bg-primary/10 shadow-lg shadow-primary/20' 
                   : 'border-border bg-card hover:border-primary/30 hover:bg-accent/50'
@@ -333,25 +332,25 @@ const CityInfo = () => {
               `}
             >
               {activeTab === tab.id && (
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full animate-pulse" />
+                <div className="absolute -top-1 -right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-primary rounded-full animate-pulse" />
               )}
               <div className={`
-                w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300
+                w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center transition-all duration-300
                 ${activeTab === tab.id 
                   ? 'bg-primary text-primary-foreground shadow-md' 
                   : 'bg-muted text-muted-foreground group-hover:bg-primary/20'
                 }
               `}>
-                <tab.icon className="w-6 h-6" />
+                <tab.icon className="w-4 h-4 sm:w-6 sm:h-6" />
               </div>
               <span className={`
-                text-sm font-medium transition-colors duration-300
+                text-xs sm:text-sm font-medium transition-colors duration-300 text-center
                 ${activeTab === tab.id ? 'text-primary' : 'text-muted-foreground'}
               `}>
                 {tab.label}
               </span>
               <div className={`
-                w-8 h-1 rounded-full transition-all duration-300
+                w-6 h-0.5 sm:w-8 sm:h-1 rounded-full transition-all duration-300
                 ${activeTab === tab.id ? 'bg-primary' : 'bg-transparent'}
               `} />
             </button>
