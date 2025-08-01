@@ -2,10 +2,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import GradientCard from "@/components/GradientCard";
 import MobileNavigation from "@/components/MobileNavigation";
-import { Search, Plane, Train, Bus, Calendar, MapPin, Clock } from "lucide-react";
+import { Plane, Train, Bus, Calendar, MapPin, Clock, ChevronDown } from "lucide-react";
 
 interface CityEvent {
   id: string;
@@ -28,6 +29,20 @@ interface HourlyCount {
 const CityInfo = () => {
   const [searchCity, setSearchCity] = useState("San Francisco");
   const [activeTab, setActiveTab] = useState("flights");
+
+  // Predetermined cities
+  const cities = [
+    "San Francisco",
+    "New York",
+    "Los Angeles", 
+    "Chicago",
+    "Miami",
+    "Seattle",
+    "Boston",
+    "Las Vegas",
+    "Denver",
+    "Austin"
+  ];
 
   // Mock data - in a real app, this would come from APIs
   const cityData: Record<string, CityEvent[]> = {
@@ -275,15 +290,22 @@ const CityInfo = () => {
             <p className="opacity-90">Track arrivals and events</p>
           </div>
 
-          {/* City Search */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/60" />
-            <Input
-              placeholder="Search city..."
-              value={searchCity}
-              onChange={(e) => setSearchCity(e.target.value)}
-              className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60 rounded-xl"
-            />
+          {/* City Selection */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-white/90">Select City</label>
+            <Select value={searchCity} onValueChange={setSearchCity}>
+              <SelectTrigger className="bg-white/10 border-white/20 text-white rounded-xl">
+                <SelectValue placeholder="Choose a city" />
+                <ChevronDown className="h-4 w-4 text-white/60" />
+              </SelectTrigger>
+              <SelectContent className="bg-background border shadow-lg z-[100]">
+                {cities.map((city) => (
+                  <SelectItem key={city} value={city} className="cursor-pointer">
+                    {city}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Current City */}
@@ -300,17 +322,19 @@ const CityInfo = () => {
       </div>
 
       <div className="p-6">
-        {/* Tabs */}
+        {/* Modern Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-6">
+          <TabsList className="grid w-full grid-cols-4 mb-6 bg-accent/50 p-1 rounded-xl">
             {tabData.map((tab) => (
               <TabsTrigger 
                 key={tab.id} 
                 value={tab.id} 
-                className="flex flex-col gap-1 py-3"
+                className="flex flex-col gap-1.5 py-3 px-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all duration-200"
               >
-                <tab.icon className="w-4 h-4" />
-                <span className="text-xs">{tab.label}</span>
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center group-data-[state=active]:bg-primary group-data-[state=active]:text-primary-foreground">
+                  <tab.icon className="w-4 h-4" />
+                </div>
+                <span className="text-xs font-medium">{tab.label}</span>
               </TabsTrigger>
             ))}
           </TabsList>
