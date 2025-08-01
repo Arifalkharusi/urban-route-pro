@@ -62,6 +62,7 @@ const Expenses = () => {
     miles: "",
     costPerMile: "0.545" // Standard IRS rate
   });
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
   const defaultCategories = ["Fuel", "Maintenance", "Insurance", "Other"];
   const allCategories = [...defaultCategories, ...customCategories];
@@ -92,7 +93,7 @@ const Expenses = () => {
         amount: parseFloat(newExpense.amount),
         category: selectedCategory,
         description: newExpense.description || "Manual expense",
-        date: new Date(),
+        date: selectedDate,
         type: "manual"
       };
       setExpenses([expense, ...expenses]);
@@ -103,7 +104,7 @@ const Expenses = () => {
         amount: calculatedAmount,
         category: "Mileage",
         description: newExpense.description || "Business mileage",
-        date: new Date(),
+        date: selectedDate,
         type: "mileage",
         miles: parseFloat(newExpense.miles),
         costPerMile: parseFloat(newExpense.costPerMile)
@@ -119,6 +120,7 @@ const Expenses = () => {
       miles: "", 
       costPerMile: "0.545" 
     });
+    setSelectedDate(new Date());
     setIsDialogOpen(false);
   };
 
@@ -228,16 +230,43 @@ const Expenses = () => {
                       </div>
                     )}
 
-                    <div className="space-y-2">
-                      <Label htmlFor="description">Description</Label>
-                      <Input
-                        id="description"
-                        placeholder="Optional description"
-                        value={newExpense.description}
-                        onChange={(e) => setNewExpense({...newExpense, description: e.target.value})}
-                        className="rounded-xl"
-                      />
-                    </div>
+                     <div className="space-y-2">
+                       <Label htmlFor="date">Date</Label>
+                       <Popover>
+                         <PopoverTrigger asChild>
+                           <Button
+                             variant="outline"
+                             className={cn(
+                               "w-full justify-start text-left font-normal rounded-xl",
+                               !selectedDate && "text-muted-foreground"
+                             )}
+                           >
+                             <CalendarIcon className="mr-2 h-4 w-4" />
+                             {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
+                           </Button>
+                         </PopoverTrigger>
+                         <PopoverContent className="w-auto p-0" align="start">
+                           <Calendar
+                             mode="single"
+                             selected={selectedDate}
+                             onSelect={(date) => date && setSelectedDate(date)}
+                             initialFocus
+                             className="p-3 pointer-events-auto"
+                           />
+                         </PopoverContent>
+                       </Popover>
+                     </div>
+
+                     <div className="space-y-2">
+                       <Label htmlFor="description">Description</Label>
+                       <Input
+                         id="description"
+                         placeholder="Optional description"
+                         value={newExpense.description}
+                         onChange={(e) => setNewExpense({...newExpense, description: e.target.value})}
+                         className="rounded-xl"
+                       />
+                     </div>
                   </TabsContent>
 
                   <TabsContent value="mileage" className="space-y-4">
@@ -281,16 +310,43 @@ const Expenses = () => {
                       </div>
                     )}
 
-                    <div className="space-y-2">
-                      <Label htmlFor="mileage-description">Description</Label>
-                      <Input
-                        id="mileage-description"
-                        placeholder="Trip purpose"
-                        value={newExpense.description}
-                        onChange={(e) => setNewExpense({...newExpense, description: e.target.value})}
-                        className="rounded-xl"
-                      />
-                    </div>
+                     <div className="space-y-2">
+                       <Label htmlFor="mileage-date">Date</Label>
+                       <Popover>
+                         <PopoverTrigger asChild>
+                           <Button
+                             variant="outline"
+                             className={cn(
+                               "w-full justify-start text-left font-normal rounded-xl",
+                               !selectedDate && "text-muted-foreground"
+                             )}
+                           >
+                             <CalendarIcon className="mr-2 h-4 w-4" />
+                             {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
+                           </Button>
+                         </PopoverTrigger>
+                         <PopoverContent className="w-auto p-0" align="start">
+                           <Calendar
+                             mode="single"
+                             selected={selectedDate}
+                             onSelect={(date) => date && setSelectedDate(date)}
+                             initialFocus
+                             className="p-3 pointer-events-auto"
+                           />
+                         </PopoverContent>
+                       </Popover>
+                     </div>
+
+                     <div className="space-y-2">
+                       <Label htmlFor="mileage-description">Description</Label>
+                       <Input
+                         id="mileage-description"
+                         placeholder="Trip purpose"
+                         value={newExpense.description}
+                         onChange={(e) => setNewExpense({...newExpense, description: e.target.value})}
+                         className="rounded-xl"
+                       />
+                     </div>
                   </TabsContent>
 
                   <Button 
