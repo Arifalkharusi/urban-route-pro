@@ -61,29 +61,58 @@ const Dashboard = () => {
 
         {/* Today's Summary */}
         <GradientCard variant="card" className="bg-white/10 backdrop-blur-sm border-white/20">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold text-white">Today's Performance</h2>
-            <span className="text-sm text-white/80">
-              {new Date().toLocaleDateString('en-US', { 
-                weekday: 'short', 
-                month: 'short', 
-                day: 'numeric' 
-              })}
-            </span>
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h2 className="text-xl font-bold text-white">Today's Summary</h2>
+              <p className="text-white/70 text-sm">
+                {new Date().toLocaleDateString('en-US', { 
+                  weekday: 'long', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </p>
+            </div>
+            <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
+              <DollarSign className="w-6 h-6 text-white" />
+            </div>
           </div>
           
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="bg-white/10 rounded-xl p-4">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-8 h-8 bg-success/20 rounded-lg flex items-center justify-center">
+                  <TrendingUp className="w-4 h-4 text-success" />
+                </div>
+                <span className="text-white/80 text-sm font-medium">Net Income</span>
+              </div>
+              <p className="text-2xl font-bold text-white">${netIncome.toFixed(2)}</p>
+              <p className="text-success text-xs">+12% vs yesterday</p>
+            </div>
+            
+            <div className="bg-white/10 rounded-xl p-4">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-8 h-8 bg-primary/20 rounded-lg flex items-center justify-center">
+                  <Activity className="w-4 h-4 text-white" />
+                </div>
+                <span className="text-white/80 text-sm font-medium">Trips</span>
+              </div>
+              <p className="text-2xl font-bold text-white">14</p>
+              <p className="text-white/60 text-xs">8.5 hours active</p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-3 gap-3">
             <div className="text-center">
-              <p className="text-white/80 text-sm">Earnings</p>
-              <p className="text-xl font-bold text-white">${todayEarnings.toFixed(2)}</p>
+              <p className="text-white/60 text-xs mb-1">Earnings</p>
+              <p className="text-lg font-semibold text-white">${todayEarnings.toFixed(2)}</p>
             </div>
             <div className="text-center">
-              <p className="text-white/80 text-sm">Expenses</p>
-              <p className="text-xl font-bold text-white">${todayExpenses.toFixed(2)}</p>
+              <p className="text-white/60 text-xs mb-1">Per Trip</p>
+              <p className="text-lg font-semibold text-white">${(todayEarnings / 14).toFixed(2)}</p>
             </div>
             <div className="text-center">
-              <p className="text-white/80 text-sm">Net</p>
-              <p className="text-xl font-bold text-success">${netIncome.toFixed(2)}</p>
+              <p className="text-white/60 text-xs mb-1">Distance</p>
+              <p className="text-lg font-semibold text-white">127 mi</p>
             </div>
           </div>
         </GradientCard>
