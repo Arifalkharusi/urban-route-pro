@@ -500,7 +500,7 @@ const Expenses = () => {
             <p className="text-muted-foreground mb-4">Start tracking your business expenses</p>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant="default" className="rounded-xl">
+                <Button variant="success" className="rounded-xl" onClick={() => openEditDialog()}>
                   <Plus className="w-4 h-4 mr-2" />
                   Add Your First Expense
                 </Button>
