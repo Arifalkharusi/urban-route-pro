@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import GradientCard from "@/components/GradientCard";
 import MobileNavigation from "@/components/MobileNavigation";
-import { Search, Plane, Train, Bus, Calendar, MapPin, Clock, Users } from "lucide-react";
+import { Search, Plane, Train, Bus, Calendar, MapPin, Clock } from "lucide-react";
 
 interface CityEvent {
   id: string;
@@ -372,14 +372,6 @@ const CityInfo = () => {
                                 }
                               </span>
                             </div>
-                            
-                            <div className="flex items-center gap-2 text-sm">
-                              <Users className="w-4 h-4 text-muted-foreground" />
-                              <span>
-                                ~{hourlyData.totalPassengers.toLocaleString()} total passengers
-                              </span>
-                            </div>
-
                             {hourlyData.locations.length > 1 && (
                               <div className="flex flex-wrap gap-1 mt-2">
                                 {hourlyData.locations.map((location, idx) => (
@@ -389,17 +381,6 @@ const CityInfo = () => {
                                 ))}
                               </div>
                             )}
-                          </div>
-
-                          {/* Action Button */}
-                          <div className="pt-2 border-t border-border">
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              className="w-full rounded-lg"
-                            >
-                              View Details
-                            </Button>
                           </div>
                         </div>
                       </GradientCard>
@@ -436,26 +417,6 @@ const CityInfo = () => {
                               <MapPin className="w-4 h-4 text-muted-foreground" />
                               <span>{item.location}</span>
                             </div>
-                            
-                            {item.passengers && (
-                              <div className="flex items-center gap-2 text-sm">
-                                <Users className="w-4 h-4 text-muted-foreground" />
-                                <span>
-                                  {item.passengers.toLocaleString()} attendees
-                                </span>
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Action Button */}
-                          <div className="pt-2 border-t border-border">
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              className="w-full rounded-lg"
-                            >
-                              Set Reminder
-                            </Button>
                           </div>
                         </div>
                       </GradientCard>
