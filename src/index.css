@@ -42,9 +42,9 @@ All colors MUST be HSL.
     --input: 250 100% 92%;
     --ring: 267 83% 58%;
 
-    /* Custom gradients - Digital Highway Theme */
-    --gradient-primary: linear-gradient(135deg, hsl(225 100% 55%), hsl(260 100% 60%));
-    --gradient-secondary: linear-gradient(135deg, hsl(225 100% 96%), hsl(260 100% 96%));
+    /* Custom gradients - Gold Rush Theme */
+    --gradient-primary: linear-gradient(135deg, hsl(45 100% 60%), hsl(30 100% 65%));
+    --gradient-secondary: linear-gradient(135deg, hsl(45 100% 95%), hsl(30 100% 95%));
     --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(250 100% 98%));
     
     /* Shadows */
