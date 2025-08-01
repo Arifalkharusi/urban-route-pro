@@ -361,7 +361,7 @@ const Earnings = () => {
                         <div className="flex justify-between items-center">
                           <div className="space-y-1">
                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <Calendar className="w-4 h-4" />
+                              <CalendarIcon className="w-4 h-4" />
                               {new Date(earning.date).toLocaleDateString()}
                             </div>
                             <div className="flex items-center gap-4 text-sm">
