@@ -9,7 +9,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import GradientCard from "@/components/GradientCard";
 import MobileNavigation from "@/components/MobileNavigation";
-import { Plus, Fuel, Wrench, Receipt, Car, Calculator, Calendar as CalendarIcon, Trash2 } from "lucide-react";
+import { Plus, Fuel, Wrench, Receipt, Car, Calculator, Calendar as CalendarIcon, Trash2, Edit3 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import type { DateRange } from "react-day-picker";
@@ -51,6 +51,7 @@ const Expenses = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [expenseToDelete, setExpenseToDelete] = useState<string | null>(null);
+  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [expenseType, setExpenseType] = useState<"manual" | "mileage">("manual");
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: new Date(new Date().setDate(new Date().getDate() - 30)),
@@ -78,7 +79,7 @@ const Expenses = () => {
 
   const totalToday = filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0);
 
-  const handleAddExpense = () => {
+  const handleSaveExpense = () => {
     if (expenseType === "manual" && newExpense.amount && newExpense.category) {
       let selectedCategory = newExpense.category;
       
@@ -91,18 +92,23 @@ const Expenses = () => {
       }
 
       const expense: Expense = {
-        id: Date.now().toString(),
+        id: editingExpense?.id || Date.now().toString(),
         amount: parseFloat(newExpense.amount),
         category: selectedCategory,
         description: newExpense.description || "Manual expense",
         date: selectedDate,
         type: "manual"
       };
-      setExpenses([expense, ...expenses]);
+      
+      if (editingExpense) {
+        setExpenses(expenses.map(e => e.id === editingExpense.id ? expense : e));
+      } else {
+        setExpenses([expense, ...expenses]);
+      }
     } else if (expenseType === "mileage" && newExpense.miles && newExpense.costPerMile) {
       const calculatedAmount = parseFloat(newExpense.miles) * parseFloat(newExpense.costPerMile);
       const expense: Expense = {
-        id: Date.now().toString(),
+        id: editingExpense?.id || Date.now().toString(),
         amount: calculatedAmount,
         category: "Mileage",
         description: newExpense.description || "Business mileage",
@@ -111,7 +117,12 @@ const Expenses = () => {
         miles: parseFloat(newExpense.miles),
         costPerMile: parseFloat(newExpense.costPerMile)
       };
-      setExpenses([expense, ...expenses]);
+      
+      if (editingExpense) {
+        setExpenses(expenses.map(e => e.id === editingExpense.id ? expense : e));
+      } else {
+        setExpenses([expense, ...expenses]);
+      }
     }
     
     setNewExpense({ 
@@ -123,7 +134,49 @@ const Expenses = () => {
       costPerMile: "0.545" 
     });
     setSelectedDate(new Date());
+    setEditingExpense(null);
     setIsDialogOpen(false);
+  };
+
+  const openEditDialog = (expense?: Expense) => {
+    if (expense) {
+      setEditingExpense(expense);
+      setExpenseType(expense.type);
+      setSelectedDate(expense.date);
+      
+      if (expense.type === "manual") {
+        setNewExpense({
+          amount: expense.amount.toString(),
+          category: expense.category,
+          customCategory: "",
+          description: expense.description,
+          miles: "",
+          costPerMile: "0.545"
+        });
+      } else if (expense.type === "mileage") {
+        setNewExpense({
+          amount: "",
+          category: "",
+          customCategory: "",
+          description: expense.description,
+          miles: expense.miles?.toString() || "",
+          costPerMile: expense.costPerMile?.toString() || "0.545"
+        });
+      }
+    } else {
+      setEditingExpense(null);
+      setExpenseType("manual");
+      setSelectedDate(new Date());
+      setNewExpense({ 
+        amount: "", 
+        category: "", 
+        customCategory: "",
+        description: "", 
+        miles: "", 
+        costPerMile: "0.545" 
+      });
+    }
+    setIsDialogOpen(true);
   };
 
   const handleDeleteExpense = () => {
@@ -184,6 +237,7 @@ const Expenses = () => {
                   size="sm" 
                   variant="ghost"
                   className="bg-white/20 hover:bg-white/30 text-white border-0 h-8 px-2 sm:px-3 text-xs sm:text-sm"
+                  onClick={() => openEditDialog()}
                 >
                   <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                   Add
@@ -191,9 +245,11 @@ const Expenses = () => {
               </DialogTrigger>
               <DialogContent className="rounded-2xl max-w-md max-h-[90vh] overflow-y-auto">
                 <DialogHeader className="pb-4">
-                  <DialogTitle className="text-lg sm:text-xl">Add New Expense</DialogTitle>
+                  <DialogTitle className="text-lg sm:text-xl">
+                    {editingExpense ? "Edit Expense" : "Add New Expense"}
+                  </DialogTitle>
                   <DialogDescription className="text-sm sm:text-base">
-                    Record a business expense or calculate mileage
+                    {editingExpense ? "Update expense details" : "Record a business expense or calculate mileage"}
                   </DialogDescription>
                 </DialogHeader>
                 
@@ -365,11 +421,11 @@ const Expenses = () => {
                   </TabsContent>
 
                   <Button 
-                    onClick={handleAddExpense}
+                    onClick={handleSaveExpense}
                     variant="default"
                     className="w-full rounded-xl h-12 text-base font-medium mt-6"
                   >
-                    Add Expense
+                    {editingExpense ? "Update Expense" : "Add Expense"}
                   </Button>
                 </Tabs>
               </DialogContent>
@@ -455,8 +511,16 @@ const Expenses = () => {
           <div className="space-y-3 sm:space-y-2">
             {filteredExpenses.map((expense) => (
               <GradientCard key={expense.id} className="hover:shadow-soft transition-shadow">
-                {/* Delete button - Top of card */}
-                <div className="flex justify-end mb-3">
+                {/* Edit and Delete buttons - Top of card */}
+                <div className="flex justify-end gap-2 mb-3">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => openEditDialog(expense)}
+                    className="h-8 w-8 p-0 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full"
+                  >
+                    <Edit3 className="w-4 h-4" />
+                  </Button>
                   <Button
                     variant="ghost"
                     size="sm"

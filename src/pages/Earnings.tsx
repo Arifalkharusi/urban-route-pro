@@ -9,7 +9,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import GradientCard from "@/components/GradientCard";
 import MobileNavigation from "@/components/MobileNavigation";
-import { Plus, Car, Clock, DollarSign, Users, TrendingUp, Calendar as CalendarIcon, Trash2 } from "lucide-react";
+import { Plus, Car, Clock, DollarSign, Users, TrendingUp, Calendar as CalendarIcon, Trash2, Edit3 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -38,6 +38,7 @@ const Earnings = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [earningToDelete, setEarningToDelete] = useState<string | null>(null);
+  const [editingEarning, setEditingEarning] = useState<Earning | null>(null);
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: new Date(new Date().setDate(new Date().getDate() - 30)),
     to: new Date()
@@ -54,7 +55,7 @@ const Earnings = () => {
   const defaultPlatforms = ["Uber", "Bolt"];
   const allPlatforms = [...defaultPlatforms, ...customPlatforms];
 
-  const handleAddEarning = () => {
+  const handleSaveEarning = () => {
     if (!formData.amount || !formData.platform || !formData.trips || !formData.hours) {
       toast({
         title: "Error",
@@ -74,8 +75,8 @@ const Earnings = () => {
       }
     }
 
-    const newEarning: Earning = {
-      id: Date.now().toString(),
+    const earningData: Earning = {
+      id: editingEarning?.id || Date.now().toString(),
       amount: parseFloat(formData.amount),
       platform: selectedPlatform,
       trips: parseInt(formData.trips),
@@ -83,7 +84,12 @@ const Earnings = () => {
       date: formData.date
     };
 
-    setEarnings([newEarning, ...earnings]);
+    if (editingEarning) {
+      setEarnings(earnings.map(e => e.id === editingEarning.id ? earningData : e));
+    } else {
+      setEarnings([earningData, ...earnings]);
+    }
+    
     setFormData({
       amount: "",
       platform: "",
@@ -92,12 +98,38 @@ const Earnings = () => {
       hours: "",
       date: new Date().toISOString().split('T')[0]
     });
+    setEditingEarning(null);
     setIsDialogOpen(false);
     
     toast({
       title: "Success",
-      description: "Earning added successfully",
+      description: editingEarning ? "Earning updated successfully" : "Earning added successfully",
     });
+  };
+
+  const openEditDialog = (earning?: Earning) => {
+    if (earning) {
+      setEditingEarning(earning);
+      setFormData({
+        amount: earning.amount.toString(),
+        platform: earning.platform,
+        customPlatform: "",
+        trips: earning.trips.toString(),
+        hours: earning.hours.toString(),
+        date: earning.date
+      });
+    } else {
+      setEditingEarning(null);
+      setFormData({
+        amount: "",
+        platform: "",
+        customPlatform: "",
+        trips: "",
+        hours: "",
+        date: new Date().toISOString().split('T')[0]
+      });
+    }
+    setIsDialogOpen(true);
   };
 
   const handleDeleteEarning = () => {
@@ -168,6 +200,7 @@ const Earnings = () => {
                   size="sm" 
                   variant="ghost"
                   className="bg-white/20 hover:bg-white/30 text-white border-0 h-8 px-2 sm:px-3 text-xs sm:text-sm"
+                  onClick={() => openEditDialog()}
                 >
                   <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                   Add
@@ -175,9 +208,11 @@ const Earnings = () => {
               </DialogTrigger>
               <DialogContent className="rounded-2xl max-w-md max-h-[90vh] overflow-y-auto">
                 <DialogHeader className="pb-4">
-                  <DialogTitle className="text-lg sm:text-xl">Add New Earning</DialogTitle>
+                  <DialogTitle className="text-lg sm:text-xl">
+                    {editingEarning ? "Edit Earning" : "Add New Earning"}
+                  </DialogTitle>
                   <DialogDescription className="text-sm sm:text-base">
-                    Record earnings for a shift
+                    {editingEarning ? "Update earning details" : "Record earnings for a shift"}
                   </DialogDescription>
                 </DialogHeader>
                 
@@ -261,11 +296,11 @@ const Earnings = () => {
                   </div>
                   
                   <Button 
-                    onClick={handleAddEarning}
+                    onClick={handleSaveEarning}
                     variant="default"
                     className="w-full rounded-xl h-12 text-base font-medium mt-6"
                   >
-                    Add Earning
+                    {editingEarning ? "Update Earning" : "Add Earning"}
                   </Button>
                 </div>
               </DialogContent>
@@ -339,7 +374,7 @@ const Earnings = () => {
             <p className="text-muted-foreground mb-4">Start tracking your platform earnings</p>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant="success" className="rounded-xl">
+                <Button variant="success" className="rounded-xl" onClick={() => openEditDialog()}>
                   <Plus className="w-4 h-4 mr-2" />
                   Add Your First Earning
                 </Button>
@@ -379,8 +414,16 @@ const Earnings = () => {
                    <div className="space-y-3 sm:space-y-2">
                      {platformEarnings.map((earning) => (
                        <GradientCard key={earning.id} className="hover:shadow-soft transition-shadow">
-                         {/* Delete button - Top of card */}
-                         <div className="flex justify-end mb-3">
+                         {/* Edit and Delete buttons - Top of card */}
+                         <div className="flex justify-end gap-2 mb-3">
+                           <Button
+                             variant="ghost"
+                             size="sm"
+                             onClick={() => openEditDialog(earning)}
+                             className="h-8 w-8 p-0 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full"
+                           >
+                             <Edit3 className="w-4 h-4" />
+                           </Button>
                            <Button
                              variant="ghost"
                              size="sm"
