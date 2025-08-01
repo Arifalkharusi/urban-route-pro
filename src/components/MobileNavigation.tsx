@@ -7,7 +7,7 @@ const MobileNavigation = () => {
     { to: "/earnings", icon: DollarSign, label: "Earnings" },
     { to: "/expenses", icon: CreditCard, label: "Expenses" },
     { to: "/targets", icon: Target, label: "Targets" },
-    { to: "/city-info", icon: MapPin, label: "City Info" },
+    { to: "/city-info", icon: MapPin, label: "City" },
   ];
 
   return (
