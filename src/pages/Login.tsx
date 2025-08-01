@@ -20,14 +20,14 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-background flex items-center justify-center p-4">
       <div className="w-full max-w-sm space-y-8">
         {/* Logo */}
         <div className="text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-primary rounded-2xl mb-4">
             <Car className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">RideAssist</h1>
+          <h1 className="text-2xl font-bold text-primary">RideAssist</h1>
           <p className="text-muted-foreground">Your driving companion</p>
         </div>
 
@@ -86,7 +86,8 @@ const Login = () => {
 
               <Button 
                 type="submit" 
-                className="w-full bg-gradient-primary hover:opacity-90 rounded-xl h-12"
+                variant="default"
+                className="w-full rounded-xl h-12"
               >
                 {isLogin ? "Sign In" : "Create Account"}
               </Button>

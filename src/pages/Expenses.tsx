@@ -146,13 +146,13 @@ const Expenses = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-gradient-background pb-20">
       {/* Header */}
       <div className="bg-gradient-primary text-white p-4 sm:p-6 pb-6 sm:pb-8">
         <div className="flex justify-between items-start sm:items-center mb-4 sm:mb-6">
           <div className="flex-1 min-w-0">
-            <h1 className="text-xl sm:text-2xl font-bold truncate">Expenses</h1>
-            <p className="opacity-90 text-sm sm:text-base mt-1">Track your business expenses</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-white truncate">Expenses</h1>
+            <p className="text-white/90 text-sm sm:text-base mt-1">Track your business expenses</p>
           </div>
           <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-full flex items-center justify-center ml-3 flex-shrink-0">
             <Receipt className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -351,7 +351,8 @@ const Expenses = () => {
 
                   <Button 
                     onClick={handleAddExpense}
-                    className="w-full bg-gradient-primary hover:opacity-90 rounded-xl h-12 text-base font-medium mt-6"
+                    variant="default"
+                    className="w-full rounded-xl h-12 text-base font-medium mt-6"
                   >
                     Add Expense
                   </Button>
@@ -381,7 +382,7 @@ const Expenses = () => {
         {/* Date Filter */}
         <GradientCard>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
-            <h3 className="font-semibold text-base sm:text-lg">Filter by Date Range</h3>
+            <h3 className="font-semibold text-base sm:text-lg text-primary">Filter by Date Range</h3>
             <Popover>
               <PopoverTrigger asChild>
                 <Button

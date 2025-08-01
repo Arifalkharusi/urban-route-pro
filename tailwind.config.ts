@@ -26,6 +26,7 @@ export default {
 				foreground: 'hsl(var(--foreground))',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
+					variant: 'hsl(var(--primary-variant))',
 					foreground: 'hsl(var(--primary-foreground))'
 				},
 				secondary: {
@@ -34,10 +35,12 @@ export default {
 				},
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
+					variant: 'hsl(var(--destructive-variant))',
 					foreground: 'hsl(var(--destructive-foreground))'
 				},
 				success: {
 					DEFAULT: 'hsl(var(--success))',
+					variant: 'hsl(var(--success-variant))',
 					foreground: 'hsl(var(--success-foreground))'
 				},
 				warning: {
@@ -50,6 +53,7 @@ export default {
 				},
 				accent: {
 					DEFAULT: 'hsl(var(--accent))',
+					variant: 'hsl(var(--accent-variant))',
 					foreground: 'hsl(var(--accent-foreground))'
 				},
 				popover: {
@@ -79,13 +83,22 @@ export default {
 				'2xl': '1.5rem'
 			},
 			backgroundImage: {
+				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+				'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
 				'gradient-primary': 'var(--gradient-primary)',
-				'gradient-secondary': 'var(--gradient-secondary)',
-				'gradient-card': 'var(--gradient-card)'
+				'gradient-accent': 'var(--gradient-accent)',
+				'gradient-background': 'var(--gradient-background)',
+				'gradient-card': 'var(--gradient-card)',
+				'gradient-success': 'var(--gradient-success)',
+				'gradient-destructive': 'var(--gradient-destructive)'
+			},
+			fontFamily: {
+				'sans': ['Inter', 'SF Pro Display', 'Roboto', 'system-ui', '-apple-system', 'sans-serif']
 			},
 			boxShadow: {
 				'soft': 'var(--shadow-soft)',
-				'card': 'var(--shadow-card)'
+				'card': 'var(--shadow-card)',
+				'primary': 'var(--shadow-primary)'
 			},
 			keyframes: {
 				'accordion-down': {

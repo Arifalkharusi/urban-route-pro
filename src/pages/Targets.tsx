@@ -133,13 +133,13 @@ const Targets = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-gradient-background pb-20">
       {/* Header */}
       <div className="bg-gradient-primary text-white p-4 sm:p-6 pb-6 sm:pb-8">
         <div className="flex justify-between items-start sm:items-center mb-4 sm:mb-6">
           <div className="flex-1 min-w-0">
-            <h1 className="text-xl sm:text-2xl font-bold truncate">Income Targets</h1>
-            <p className="opacity-90 text-sm sm:text-base mt-1">Set and track your earning goals</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-white truncate">Income Targets</h1>
+            <p className="text-white/90 text-sm sm:text-base mt-1">Set and track your earning goals</p>
           </div>
           <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-full flex items-center justify-center ml-3 flex-shrink-0">
             <Target className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -186,10 +186,11 @@ const Targets = () => {
         {targets.length === 0 ? (
           <GradientCard className="text-center py-8">
             <Target className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="font-semibold mb-2">No targets set</h3>
+            <h3 className="font-semibold mb-2 text-primary">No targets set</h3>
             <p className="text-muted-foreground mb-4">Create your first income target to start tracking progress</p>
             <Button 
-              className="bg-gradient-primary hover:opacity-90 rounded-xl"
+              variant="default"
+              className="rounded-xl"
               onClick={() => openEditDialog()}
             >
               <Target className="w-4 h-4 mr-2" />
@@ -218,7 +219,7 @@ const Targets = () => {
                           {getPeriodIcon(target.period)}
                         </div>
                         <div>
-                          <h3 className="font-bold text-base capitalize">{target.period} Target</h3>
+                          <h3 className="font-bold text-base capitalize text-primary">{target.period} Target</h3>
                           <p className="text-xs text-muted-foreground flex items-center gap-1">
                             <Clock className="w-3 h-3" />
                             {getRemainingTime(target.period, target.startDate)}
@@ -369,7 +370,8 @@ const Targets = () => {
 
             <Button 
               onClick={handleSaveTarget}
-              className="w-full bg-gradient-primary hover:opacity-90 rounded-xl h-12 text-base font-medium mt-6"
+              variant="default"
+              className="w-full rounded-xl h-12 text-base font-medium mt-6"
               disabled={!newTarget.amount}
             >
               {editingTarget ? "Update Target" : "Create Target"}

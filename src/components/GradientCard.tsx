@@ -10,7 +10,7 @@ interface GradientCardProps {
 const GradientCard = ({ children, className, variant = "card" }: GradientCardProps) => {
   const variantClasses = {
     primary: "bg-gradient-primary text-primary-foreground",
-    secondary: "bg-gradient-secondary text-secondary-foreground",
+    secondary: "bg-gradient-card text-card-foreground",
     card: "bg-gradient-card text-card-foreground"
   };
 

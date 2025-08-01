@@ -125,13 +125,13 @@ const Earnings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-gradient-background pb-20">
       {/* Header */}
       <div className="bg-gradient-primary text-white p-4 sm:p-6 pb-6 sm:pb-8">
         <div className="flex justify-between items-start sm:items-center mb-4 sm:mb-6">
           <div className="flex-1 min-w-0">
-            <h1 className="text-xl sm:text-2xl font-bold truncate">Earnings</h1>
-            <p className="opacity-90 text-sm sm:text-base mt-1">Track your income by platform</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-white truncate">Earnings</h1>
+            <p className="text-white/90 text-sm sm:text-base mt-1">Track your income by platform</p>
           </div>
           <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-full flex items-center justify-center ml-3 flex-shrink-0">
             <DollarSign className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -242,7 +242,8 @@ const Earnings = () => {
                   
                   <Button 
                     onClick={handleAddEarning}
-                    className="w-full bg-gradient-primary hover:opacity-90 rounded-xl h-12 text-base font-medium mt-6"
+                    variant="default"
+                    className="w-full rounded-xl h-12 text-base font-medium mt-6"
                   >
                     Add Earning
                   </Button>
@@ -272,7 +273,7 @@ const Earnings = () => {
         {/* Date Filter */}
         <GradientCard>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
-            <h3 className="font-semibold text-base sm:text-lg">Filter by Date Range</h3>
+            <h3 className="font-semibold text-base sm:text-lg text-primary">Filter by Date Range</h3>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -314,11 +315,11 @@ const Earnings = () => {
         {filteredEarnings.length === 0 ? (
           <GradientCard className="text-center py-8">
             <Car className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="font-semibold mb-2">No earnings yet</h3>
+            <h3 className="font-semibold mb-2 text-primary">No earnings yet</h3>
             <p className="text-muted-foreground mb-4">Start tracking your platform earnings</p>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-gradient-primary hover:opacity-90 rounded-xl">
+                <Button variant="default" className="rounded-xl">
                   <Plus className="w-4 h-4 mr-2" />
                   Add Your First Earning
                 </Button>

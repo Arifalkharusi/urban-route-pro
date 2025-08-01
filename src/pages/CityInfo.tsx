@@ -281,7 +281,7 @@ const CityInfo = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-gradient-background pb-20">
       {/* Header */}
       <div className="bg-gradient-primary text-white p-4 sm:p-6">
         <div className="space-y-3 sm:space-y-4">
@@ -362,13 +362,13 @@ const CityInfo = () => {
           {tabData.map((tab) => (
             <TabsContent key={tab.id} value={tab.id} className="space-y-4">
               {tab.data.length === 0 ? (
-                <GradientCard className="text-center py-8">
-                  <tab.icon className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="font-semibold mb-2">No {tab.label.toLowerCase()} found</h3>
-                  <p className="text-muted-foreground">
-                    No {tab.label.toLowerCase()} scheduled for {searchCity} today
-                  </p>
-                </GradientCard>
+                  <GradientCard className="text-center py-8">
+                    <tab.icon className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="font-semibold mb-2 text-primary">No {tab.label.toLowerCase()} found</h3>
+                    <p className="text-muted-foreground">
+                      No {tab.label.toLowerCase()} scheduled for {searchCity} today
+                    </p>
+                  </GradientCard>
               ) : (
                 <div className="space-y-3">
                   {tab.isTransport ? (

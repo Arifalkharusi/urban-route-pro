@@ -56,13 +56,13 @@ const Dashboard = () => {
   const COLORS = ['#8B5CF6', '#EC4899', '#10B981', '#F59E0B'];
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-gradient-background pb-20">
       {/* Header */}
       <div className="bg-gradient-primary text-white p-4 sm:p-6 pb-6 sm:pb-8">
         <div className="flex justify-between items-start sm:items-center mb-4 sm:mb-6">
           <div className="flex-1 min-w-0">
-            <h1 className="text-xl sm:text-2xl font-bold truncate">Analytics Dashboard</h1>
-            <p className="opacity-90 text-sm sm:text-base mt-1">Track your performance insights</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-white truncate">Analytics Dashboard</h1>
+            <p className="text-white/90 text-sm sm:text-base mt-1">Track your performance insights</p>
           </div>
           <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-full flex items-center justify-center ml-3 flex-shrink-0">
             <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -132,7 +132,7 @@ const Dashboard = () => {
         {/* Date Filter */}
         <GradientCard>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
-            <h3 className="font-semibold text-base sm:text-lg">Filter by Date Range</h3>
+            <h3 className="font-semibold text-base sm:text-lg text-primary">Filter by Date Range</h3>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -175,7 +175,7 @@ const Dashboard = () => {
         <GradientCard>
           <div className="space-y-3 sm:space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-base sm:text-lg">Weekly Target</h3>
+              <h3 className="font-semibold text-base sm:text-lg text-primary">Weekly Target</h3>
               <Target className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
             </div>
             
@@ -196,7 +196,7 @@ const Dashboard = () => {
         <GradientCard>
           <div className="space-y-3 sm:space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-base sm:text-lg">Weekly Overview</h3>
+              <h3 className="font-semibold text-base sm:text-lg text-primary">Weekly Overview</h3>
               <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
             </div>
             
@@ -262,7 +262,7 @@ const Dashboard = () => {
         <GradientCard>
           <div className="space-y-3 sm:space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-base sm:text-lg">Peak Hours Today</h3>
+              <h3 className="font-semibold text-base sm:text-lg text-primary">Peak Hours Today</h3>
               <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
             </div>
             
@@ -331,7 +331,7 @@ const Dashboard = () => {
         {/* Expense Breakdown Chart */}
         <GradientCard>
           <div className="space-y-3 sm:space-y-4">
-            <h3 className="font-semibold text-base sm:text-lg">Expense Breakdown</h3>
+            <h3 className="font-semibold text-base sm:text-lg text-primary">Expense Breakdown</h3>
             
             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
               <div className="h-32 w-32 sm:h-40 sm:w-40 mx-auto sm:mx-0">
