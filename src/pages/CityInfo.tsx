@@ -77,69 +77,90 @@ const CityInfo = () => {
       const today = new Date().toISOString().split('T')[0];
       console.log(`Using date: ${today}`);
       
-      // CORS proxy service
-      const corsProxy = 'https://api.allorigins.win/raw?url=';
+      // Try multiple CORS proxy services
+      const corsProxies = [
+        'https://cors-anywhere.herokuapp.com/',
+        'https://api.allorigins.win/raw?url=',
+        'https://corsproxy.io/?'
+      ];
       
       // Fetch flight data from Aerodatabox API via CORS proxy
       let flightData = { flights: [] };
-      try {
-        const flightUrl = `https://aerodatabox.p.rapidapi.com/flights/airports/iata/${config.iata}/${today}?withLeg=false&direction=Arrival&withCancelled=false&withCodeshared=true&withCargo=false&withPrivate=false&withLocation=false`;
-        const proxiedFlightUrl = corsProxy + encodeURIComponent(flightUrl);
-        console.log(`Fetching flights via proxy: ${proxiedFlightUrl}`);
-        
-        const flightResponse = await fetch(proxiedFlightUrl, {
-          headers: {
-            'X-RapidAPI-Key': '8301f8c387msh12139157bfaee9bp116ab6jsn0633ba721fa9',
-            'X-RapidAPI-Host': 'aerodatabox.p.rapidapi.com'
-          }
-        });
-        
-        console.log(`Flight API response status: ${flightResponse.status}`);
-        
-        if (flightResponse.ok) {
-          const data = await flightResponse.json();
-          console.log('Flight API response:', data);
+      
+      for (const corsProxy of corsProxies) {
+        try {
+          const flightUrl = `https://aerodatabox.p.rapidapi.com/flights/airports/iata/${config.iata}/${today}?withLeg=false&direction=Arrival&withCancelled=false&withCodeshared=true&withCargo=false&withPrivate=false&withLocation=false`;
+          const proxiedFlightUrl = corsProxy.includes('allorigins') ? 
+            corsProxy + encodeURIComponent(flightUrl) : 
+            corsProxy + flightUrl;
           
-          if (data.arrivals && data.arrivals.length > 0) {
-            flightData = {
-              flights: data.arrivals.slice(0, 10).map((flight: any, index: number) => ({
-                id: `flight-${index}`,
-                title: `${flight.airline?.name || 'Unknown'} ${flight.number || ''} - ${flight.departure?.airport?.name || 'Unknown'}`,
-                type: 'flight' as const,
-                time: flight.arrival?.scheduledTime?.local ? 
-                  new Date(flight.arrival.scheduledTime.local).toLocaleTimeString('en-US', { 
-                    hour: '2-digit', 
-                    minute: '2-digit', 
-                    hour12: false 
-                  }) : 'TBD',
-                location: `${flight.arrival?.airport?.iata || config.iata} ${flight.arrival?.terminal ? `Terminal ${flight.arrival.terminal}` : ''}`,
-                details: `Arrival from ${flight.departure?.airport?.iata || 'Unknown'}`,
-                passengers: flight.aircraft?.model ? Math.floor(Math.random() * 200) + 100 : 150,
-                terminal: flight.arrival?.terminal || undefined
-              }))
-            };
-            console.log(`Found ${flightData.flights.length} real flights`);
+          console.log(`Trying flights with proxy ${corsProxy}: ${proxiedFlightUrl}`);
+          
+          const flightResponse = await fetch(proxiedFlightUrl, {
+            method: 'GET',
+            headers: corsProxy.includes('allorigins') ? {} : {
+              'X-RapidAPI-Key': '8301f8c387msh12139157bfaee9bp116ab6jsn0633ba721fa9',
+              'X-RapidAPI-Host': 'aerodatabox.p.rapidapi.com',
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          console.log(`Flight API response status with ${corsProxy}: ${flightResponse.status}`);
+          
+          if (flightResponse.ok) {
+            const data = await flightResponse.json();
+            console.log('Flight API response:', data);
+            
+            if (data.arrivals && data.arrivals.length > 0) {
+              flightData = {
+                flights: data.arrivals.slice(0, 10).map((flight: any, index: number) => ({
+                  id: `flight-${index}`,
+                  title: `${flight.airline?.name || 'Unknown'} ${flight.number || ''} - ${flight.departure?.airport?.name || 'Unknown'}`,
+                  type: 'flight' as const,
+                  time: flight.arrival?.scheduledTime?.local ? 
+                    new Date(flight.arrival.scheduledTime.local).toLocaleTimeString('en-US', { 
+                      hour: '2-digit', 
+                      minute: '2-digit', 
+                      hour12: false 
+                    }) : 'TBD',
+                  location: `${flight.arrival?.airport?.iata || config.iata} ${flight.arrival?.terminal ? `Terminal ${flight.arrival.terminal}` : ''}`,
+                  details: `Arrival from ${flight.departure?.airport?.iata || 'Unknown'}`,
+                  passengers: flight.aircraft?.model ? Math.floor(Math.random() * 200) + 100 : 150,
+                  terminal: flight.arrival?.terminal || undefined
+                }))
+              };
+              console.log(`Found ${flightData.flights.length} real flights via ${corsProxy}`);
+              break; // Success, stop trying other proxies
+            }
           } else {
-            console.log('No flights found in API response');
+            const errorText = await flightResponse.text();
+            console.error(`Flight API error with ${corsProxy}: ${flightResponse.status} - ${errorText}`);
           }
-        } else {
-          const errorText = await flightResponse.text();
-          console.error(`Flight API error: ${flightResponse.status} - ${errorText}`);
+        } catch (error) {
+          console.error(`Flight API error with ${corsProxy}:`, error);
+          // Continue to next proxy
         }
-      } catch (error) {
-        console.error('Flight API error:', error);
       }
       
-      // Fetch train data from Transport API via CORS proxy
+      
+      // Fetch train data from Transport API (try direct call first, then proxy)
       let trainData = { trains: [] };
       try {
         const currentTime = new Date().toLocaleTimeString('en-GB', { hour12: false }).substring(0, 5);
         const trainUrl = `https://transportapi.com/v3/uk/public/journey/from/${encodeURIComponent(config.railHub)}/to/London/${today}/${currentTime}.json?app_id=5e5633f2&app_key=6343d100ba8457e103909d2a8b586631&modes=train&limit=10`;
-        const proxiedTrainUrl = corsProxy + encodeURIComponent(trainUrl);
-        console.log(`Fetching trains via proxy: ${proxiedTrainUrl}`);
         
-        const trainResponse = await fetch(proxiedTrainUrl);
-        console.log(`Train API response status: ${trainResponse.status}`);
+        // Try direct call first
+        console.log(`Trying direct train API call: ${trainUrl}`);
+        let trainResponse = await fetch(trainUrl);
+        console.log(`Direct train API response status: ${trainResponse.status}`);
+        
+        // If direct call fails due to CORS, try proxy
+        if (!trainResponse.ok) {
+          const proxiedTrainUrl = `https://corsproxy.io/?${encodeURIComponent(trainUrl)}`;
+          console.log(`Trying train API via proxy: ${proxiedTrainUrl}`);
+          trainResponse = await fetch(proxiedTrainUrl);
+          console.log(`Proxied train API response status: ${trainResponse.status}`);
+        }
         
         if (trainResponse.ok) {
           const data = await trainResponse.json();
@@ -175,16 +196,25 @@ const CityInfo = () => {
         console.error('Train API error:', error);
       }
       
-      // Fetch bus data from Transport API via CORS proxy
+      
+      // Fetch bus data from Transport API
       let busData = { buses: [] };
       try {
         const currentTime = new Date().toLocaleTimeString('en-GB', { hour12: false }).substring(0, 5);
         const busUrl = `https://transportapi.com/v3/uk/public/journey/from/${encodeURIComponent(config.coachStation)}/to/London Victoria Coach Station/${today}/${currentTime}.json?app_id=5e5633f2&app_key=6343d100ba8457e103909d2a8b586631&modes=bus&limit=10`;
-        const proxiedBusUrl = corsProxy + encodeURIComponent(busUrl);
-        console.log(`Fetching buses via proxy: ${proxiedBusUrl}`);
         
-        const busResponse = await fetch(proxiedBusUrl);
-        console.log(`Bus API response status: ${busResponse.status}`);
+        // Try direct call first
+        console.log(`Trying direct bus API call: ${busUrl}`);
+        let busResponse = await fetch(busUrl);
+        console.log(`Direct bus API response status: ${busResponse.status}`);
+        
+        // If direct call fails due to CORS, try proxy
+        if (!busResponse.ok) {
+          const proxiedBusUrl = `https://corsproxy.io/?${encodeURIComponent(busUrl)}`;
+          console.log(`Trying bus API via proxy: ${proxiedBusUrl}`);
+          busResponse = await fetch(proxiedBusUrl);
+          console.log(`Proxied bus API response status: ${busResponse.status}`);
+        }
         
         if (busResponse.ok) {
           const data = await busResponse.json();
