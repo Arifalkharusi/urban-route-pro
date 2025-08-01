@@ -42,15 +42,20 @@ const Expenses = () => {
     }
   ]);
 
+  const [customCategories, setCustomCategories] = useState<string[]>(["Parking", "Tolls"]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [expenseType, setExpenseType] = useState<"manual" | "mileage">("manual");
   const [newExpense, setNewExpense] = useState({
     amount: "",
     category: "",
+    customCategory: "",
     description: "",
     miles: "",
     costPerMile: "0.545" // Standard IRS rate
   });
+
+  const defaultCategories = ["Fuel", "Maintenance", "Insurance", "Other"];
+  const allCategories = [...defaultCategories, ...customCategories];
 
   const totalToday = expenses
     .filter(expense => expense.date.toDateString() === new Date().toDateString())
@@ -58,10 +63,20 @@ const Expenses = () => {
 
   const handleAddExpense = () => {
     if (expenseType === "manual" && newExpense.amount && newExpense.category) {
+      let selectedCategory = newExpense.category;
+      
+      // Handle custom category
+      if (newExpense.category === "custom" && newExpense.customCategory) {
+        selectedCategory = newExpense.customCategory;
+        if (!customCategories.includes(newExpense.customCategory)) {
+          setCustomCategories([...customCategories, newExpense.customCategory]);
+        }
+      }
+
       const expense: Expense = {
         id: Date.now().toString(),
         amount: parseFloat(newExpense.amount),
-        category: newExpense.category,
+        category: selectedCategory,
         description: newExpense.description || "Manual expense",
         date: new Date(),
         type: "manual"
@@ -82,7 +97,14 @@ const Expenses = () => {
       setExpenses([expense, ...expenses]);
     }
     
-    setNewExpense({ amount: "", category: "", description: "", miles: "", costPerMile: "0.545" });
+    setNewExpense({ 
+      amount: "", 
+      category: "", 
+      customCategory: "",
+      description: "", 
+      miles: "", 
+      costPerMile: "0.545" 
+    });
     setIsDialogOpen(false);
   };
 
@@ -161,16 +183,27 @@ const Expenses = () => {
                       <SelectTrigger className="rounded-xl">
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Fuel">Fuel</SelectItem>
-                        <SelectItem value="Maintenance">Maintenance</SelectItem>
-                        <SelectItem value="Insurance">Insurance</SelectItem>
-                        <SelectItem value="Parking">Parking</SelectItem>
-                        <SelectItem value="Tolls">Tolls</SelectItem>
-                        <SelectItem value="Other">Other</SelectItem>
+                      <SelectContent className="bg-background border shadow-lg">
+                        {allCategories.map((category) => (
+                          <SelectItem key={category} value={category}>{category}</SelectItem>
+                        ))}
+                        <SelectItem value="custom">Add Custom Category</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
+                  
+                  {newExpense.category === "custom" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="customCategory">Custom Category Name</Label>
+                      <Input
+                        id="customCategory"
+                        value={newExpense.customCategory}
+                        onChange={(e) => setNewExpense({...newExpense, customCategory: e.target.value})}
+                        placeholder="e.g., Car Wash, Phone Bill"
+                        className="rounded-xl"
+                      />
+                    </div>
+                  )}
 
                   <div className="space-y-2">
                     <Label htmlFor="description">Description</Label>
