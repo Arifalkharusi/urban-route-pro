@@ -454,31 +454,31 @@ const Expenses = () => {
         ) : (
           <div className="space-y-3 sm:space-y-2">
             {filteredExpenses.map((expense) => (
-              <GradientCard key={expense.id} className="hover:shadow-soft transition-shadow">
-                <div className="space-y-3 sm:space-y-0 sm:flex sm:items-start sm:justify-between">
+              <GradientCard key={expense.id} className="hover:shadow-soft transition-shadow relative">
+                {/* Delete button - Top right corner for all screens */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => openDeleteDialog(expense.id)}
+                  className="absolute top-2 right-2 h-8 w-8 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-full z-10"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+
+                <div className="space-y-3 sm:space-y-0 sm:flex sm:items-start sm:justify-between pr-10">
                   {/* Mobile: Top Section with Amount and Time */}
                   <div className="flex justify-between items-start sm:hidden">
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Receipt className="w-3 h-3" />
                       {formatTime(expense.date)}
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="text-right">
-                        <p className="text-lg font-bold text-destructive">
-                          -${expense.amount.toFixed(2)}
-                        </p>
-                        {expense.type === "mileage" && (
-                          <p className="text-xs text-accent">Auto-calc</p>
-                        )}
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openDeleteDialog(expense.id)}
-                        className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-destructive">
+                        -${expense.amount.toFixed(2)}
+                      </p>
+                      {expense.type === "mileage" && (
+                        <p className="text-xs text-accent">Auto-calc</p>
+                      )}
                     </div>
                   </div>
 
@@ -554,20 +554,10 @@ const Expenses = () => {
                   </div>
                   
                   {/* Desktop: Amount Display */}
-                  <div className="hidden sm:flex sm:items-center sm:gap-3">
-                    <div className="text-right">
-                      <p className="text-lg sm:text-xl font-bold text-destructive">
-                        -${expense.amount.toFixed(2)}
-                      </p>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => openDeleteDialog(expense.id)}
-                      className="h-10 w-10 p-0 text-muted-foreground hover:text-destructive"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                  <div className="hidden sm:block sm:text-right">
+                    <p className="text-lg sm:text-xl font-bold text-destructive">
+                      -${expense.amount.toFixed(2)}
+                    </p>
                   </div>
                 </div>
               </GradientCard>
