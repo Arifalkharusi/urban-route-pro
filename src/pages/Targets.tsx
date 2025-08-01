@@ -7,7 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import GradientCard from "@/components/GradientCard";
 import MobileNavigation from "@/components/MobileNavigation";
-import { Target, Edit3, TrendingUp, Calendar, Clock } from "lucide-react";
+import { Target, Edit3, TrendingUp, Calendar, Clock, Trash2 } from "lucide-react";
 
 interface TargetData {
   id: string;
@@ -43,6 +43,8 @@ const Targets = () => {
   ]);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [targetToDelete, setTargetToDelete] = useState<string | null>(null);
   const [editingTarget, setEditingTarget] = useState<TargetData | null>(null);
   const [newTarget, setNewTarget] = useState({
     amount: "",
@@ -83,6 +85,19 @@ const Targets = () => {
       setNewTarget({ amount: "", period: "weekly" });
     }
     setIsDialogOpen(true);
+  };
+
+  const handleDeleteTarget = () => {
+    if (targetToDelete) {
+      setTargets(targets.filter(target => target.id !== targetToDelete));
+      setTargetToDelete(null);
+      setIsDeleteDialogOpen(false);
+    }
+  };
+
+  const openDeleteDialog = (targetId: string) => {
+    setTargetToDelete(targetId);
+    setIsDeleteDialogOpen(true);
   };
 
   const getProgressPercentage = (current: number, target: number) => {
@@ -227,14 +242,24 @@ const Targets = () => {
                         </div>
                       </div>
                       
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openEditDialog(target)}
-                        className="h-10 w-10 p-0 hover:bg-muted/50 rounded-xl"
-                      >
-                        <Edit3 className="w-4 h-4" />
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => openEditDialog(target)}
+                          className="h-10 w-10 p-0 hover:bg-muted/50 rounded-xl"
+                        >
+                          <Edit3 className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => openDeleteDialog(target.id)}
+                          className="h-10 w-10 p-0 text-muted-foreground hover:text-destructive rounded-xl"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
 
                     {/* Amount section - Stacked for mobile */}
@@ -375,6 +400,35 @@ const Targets = () => {
               disabled={!newTarget.amount}
             >
               {editingTarget ? "Update Target" : "Create Target"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="rounded-2xl max-w-sm">
+          <DialogHeader className="pb-4">
+            <DialogTitle className="text-lg">Delete Target</DialogTitle>
+            <DialogDescription className="text-sm">
+              Are you sure you want to delete this target? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="flex gap-3 pt-4">
+            <Button 
+              variant="outline" 
+              onClick={() => setIsDeleteDialogOpen(false)}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={handleDeleteTarget}
+              className="flex-1"
+            >
+              Delete
             </Button>
           </div>
         </DialogContent>

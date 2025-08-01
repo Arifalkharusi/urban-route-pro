@@ -9,7 +9,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import GradientCard from "@/components/GradientCard";
 import MobileNavigation from "@/components/MobileNavigation";
-import { Plus, Car, Clock, DollarSign, Users, TrendingUp, Calendar as CalendarIcon } from "lucide-react";
+import { Plus, Car, Clock, DollarSign, Users, TrendingUp, Calendar as CalendarIcon, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -36,6 +36,8 @@ const Earnings = () => {
   
   const [customPlatforms, setCustomPlatforms] = useState<string[]>(["Lyft"]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [earningToDelete, setEarningToDelete] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: new Date(new Date().setDate(new Date().getDate() - 30)),
     to: new Date()
@@ -96,6 +98,24 @@ const Earnings = () => {
       title: "Success",
       description: "Earning added successfully",
     });
+  };
+
+  const handleDeleteEarning = () => {
+    if (earningToDelete) {
+      setEarnings(earnings.filter(earning => earning.id !== earningToDelete));
+      setEarningToDelete(null);
+      setIsDeleteDialogOpen(false);
+      
+      toast({
+        title: "Success", 
+        description: "Earning deleted successfully",
+      });
+    }
+  };
+
+  const openDeleteDialog = (earningId: string) => {
+    setEarningToDelete(earningId);
+    setIsDeleteDialogOpen(true);
   };
 
   // Filter earnings by date range
@@ -366,14 +386,24 @@ const Earnings = () => {
                               <CalendarIcon className="w-3 h-3" />
                               {new Date(earning.date).toLocaleDateString()}
                             </div>
-                            <div className="text-right">
-                              <p className="text-lg font-bold text-success">
-                                ${earning.amount.toFixed(2)}
-                              </p>
-                              <div className="flex items-center gap-1 text-xs text-success">
-                                <TrendingUp className="w-3 h-3" />
-                                ${(earning.amount / earning.hours).toFixed(2)}/hr
+                            <div className="flex items-center gap-2">
+                              <div className="text-right">
+                                <p className="text-lg font-bold text-success">
+                                  ${earning.amount.toFixed(2)}
+                                </p>
+                                <div className="flex items-center gap-1 text-xs text-success">
+                                  <TrendingUp className="w-3 h-3" />
+                                  ${(earning.amount / earning.hours).toFixed(2)}/hr
+                                </div>
                               </div>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => openDeleteDialog(earning.id)}
+                                className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
                             </div>
                           </div>
 
@@ -424,14 +454,24 @@ const Earnings = () => {
                           </div>
 
                           {/* Desktop: Amount Display */}
-                          <div className="hidden sm:block sm:text-right">
-                            <p className="text-xl font-bold text-success">
-                              ${earning.amount.toFixed(2)}
-                            </p>
-                            <div className="flex items-center gap-1 text-sm text-success">
-                              <TrendingUp className="w-3 h-3" />
-                              ${(earning.amount / earning.hours).toFixed(2)}/hr
+                          <div className="hidden sm:flex sm:items-center sm:gap-3">
+                            <div className="text-right">
+                              <p className="text-lg sm:text-xl font-bold text-success">
+                                ${earning.amount.toFixed(2)}
+                              </p>
+                              <div className="flex items-center gap-1 text-sm text-success">
+                                <TrendingUp className="w-3 h-3" />
+                                ${(earning.amount / earning.hours).toFixed(2)}/hr
+                              </div>
                             </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => openDeleteDialog(earning.id)}
+                              className="h-10 w-10 p-0 text-muted-foreground hover:text-destructive"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
                           </div>
                         </div>
                       </GradientCard>
@@ -443,6 +483,35 @@ const Earnings = () => {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="rounded-2xl max-w-sm">
+          <DialogHeader className="pb-4">
+            <DialogTitle className="text-lg">Delete Earning</DialogTitle>
+            <DialogDescription className="text-sm">
+              Are you sure you want to delete this earning? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="flex gap-3 pt-4">
+            <Button 
+              variant="outline" 
+              onClick={() => setIsDeleteDialogOpen(false)}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={handleDeleteEarning}
+              className="flex-1"
+            >
+              Delete
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <MobileNavigation />
     </div>

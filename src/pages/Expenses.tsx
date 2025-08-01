@@ -9,7 +9,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import GradientCard from "@/components/GradientCard";
 import MobileNavigation from "@/components/MobileNavigation";
-import { Plus, Fuel, Wrench, Receipt, Car, Calculator, Calendar as CalendarIcon } from "lucide-react";
+import { Plus, Fuel, Wrench, Receipt, Car, Calculator, Calendar as CalendarIcon, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import type { DateRange } from "react-day-picker";
@@ -49,6 +49,8 @@ const Expenses = () => {
 
   const [customCategories, setCustomCategories] = useState<string[]>(["Parking", "Tolls"]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [expenseToDelete, setExpenseToDelete] = useState<string | null>(null);
   const [expenseType, setExpenseType] = useState<"manual" | "mileage">("manual");
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: new Date(new Date().setDate(new Date().getDate() - 30)),
@@ -122,6 +124,19 @@ const Expenses = () => {
     });
     setSelectedDate(new Date());
     setIsDialogOpen(false);
+  };
+
+  const handleDeleteExpense = () => {
+    if (expenseToDelete) {
+      setExpenses(expenses.filter(expense => expense.id !== expenseToDelete));
+      setExpenseToDelete(null);
+      setIsDeleteDialogOpen(false);
+    }
+  };
+
+  const openDeleteDialog = (expenseId: string) => {
+    setExpenseToDelete(expenseId);
+    setIsDeleteDialogOpen(true);
   };
 
   const formatTime = (date: Date) => {
@@ -447,13 +462,23 @@ const Expenses = () => {
                       <Receipt className="w-3 h-3" />
                       {formatTime(expense.date)}
                     </div>
-                    <div className="text-right">
-                      <p className="text-lg font-bold text-destructive">
-                        -${expense.amount.toFixed(2)}
-                      </p>
-                      {expense.type === "mileage" && (
-                        <p className="text-xs text-accent">Auto-calc</p>
-                      )}
+                    <div className="flex items-center gap-2">
+                      <div className="text-right">
+                        <p className="text-lg font-bold text-destructive">
+                          -${expense.amount.toFixed(2)}
+                        </p>
+                        {expense.type === "mileage" && (
+                          <p className="text-xs text-accent">Auto-calc</p>
+                        )}
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openDeleteDialog(expense.id)}
+                        className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
                     </div>
                   </div>
 
@@ -529,10 +554,20 @@ const Expenses = () => {
                   </div>
                   
                   {/* Desktop: Amount Display */}
-                  <div className="hidden sm:block sm:text-right">
-                    <p className="text-lg sm:text-xl font-bold text-destructive">
-                      -${expense.amount.toFixed(2)}
-                    </p>
+                  <div className="hidden sm:flex sm:items-center sm:gap-3">
+                    <div className="text-right">
+                      <p className="text-lg sm:text-xl font-bold text-destructive">
+                        -${expense.amount.toFixed(2)}
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => openDeleteDialog(expense.id)}
+                      className="h-10 w-10 p-0 text-muted-foreground hover:text-destructive"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
                 </div>
               </GradientCard>
@@ -540,6 +575,35 @@ const Expenses = () => {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="rounded-2xl max-w-sm">
+          <DialogHeader className="pb-4">
+            <DialogTitle className="text-lg">Delete Expense</DialogTitle>
+            <DialogDescription className="text-sm">
+              Are you sure you want to delete this expense? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="flex gap-3 pt-4">
+            <Button 
+              variant="outline" 
+              onClick={() => setIsDeleteDialogOpen(false)}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={handleDeleteExpense}
+              className="flex-1"
+            >
+              Delete
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <MobileNavigation />
     </div>
