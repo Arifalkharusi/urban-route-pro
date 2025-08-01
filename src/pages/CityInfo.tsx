@@ -285,10 +285,6 @@ const CityInfo = () => {
       {/* Header */}
       <div className="bg-gradient-primary text-white p-6">
         <div className="space-y-4">
-          <div>
-            <h1 className="text-2xl font-bold">City</h1>
-            <p className="opacity-90">Track arrivals and events</p>
-          </div>
 
           {/* City Selection */}
           <div className="space-y-2">
