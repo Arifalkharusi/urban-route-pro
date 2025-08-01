@@ -297,15 +297,15 @@ const Earnings = () => {
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0 z-50" align="start">
+              <PopoverContent className="w-auto p-0 bg-background border shadow-lg z-[100]" align="start">
                 <Calendar
                   initialFocus
                   mode="range"
                   defaultMonth={dateRange?.from}
                   selected={dateRange}
                   onSelect={setDateRange}
-                  numberOfMonths={2}
-                  className="p-3 pointer-events-auto"
+                  numberOfMonths={1}
+                  className="p-3 pointer-events-auto rounded-md"
                 />
               </PopoverContent>
             </Popover>
