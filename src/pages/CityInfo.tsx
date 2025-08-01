@@ -322,22 +322,47 @@ const CityInfo = () => {
       </div>
 
       <div className="p-6">
-        {/* Modern Tabs */}
+        {/* Modern Tab Selectors */}
+        <div className="grid grid-cols-4 gap-3 mb-6">
+          {tabData.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`
+                relative flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all duration-300 hover:scale-105
+                ${activeTab === tab.id 
+                  ? 'border-primary bg-primary/10 shadow-lg shadow-primary/20' 
+                  : 'border-border bg-card hover:border-primary/30 hover:bg-accent/50'
+                }
+              `}
+            >
+              {activeTab === tab.id && (
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full animate-pulse" />
+              )}
+              <div className={`
+                w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300
+                ${activeTab === tab.id 
+                  ? 'bg-primary text-primary-foreground shadow-md' 
+                  : 'bg-muted text-muted-foreground group-hover:bg-primary/20'
+                }
+              `}>
+                <tab.icon className="w-6 h-6" />
+              </div>
+              <span className={`
+                text-sm font-medium transition-colors duration-300
+                ${activeTab === tab.id ? 'text-primary' : 'text-muted-foreground'}
+              `}>
+                {tab.label}
+              </span>
+              <div className={`
+                w-8 h-1 rounded-full transition-all duration-300
+                ${activeTab === tab.id ? 'bg-primary' : 'bg-transparent'}
+              `} />
+            </button>
+          ))}
+        </div>
+
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-6 bg-muted p-1 rounded-xl border">
-            {tabData.map((tab) => (
-              <TabsTrigger 
-                key={tab.id} 
-                value={tab.id} 
-                className="flex flex-col gap-1.5 py-3 px-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all duration-200"
-              >
-                <div className="w-8 h-8 rounded-full bg-muted-foreground/10 flex items-center justify-center data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-colors">
-                  <tab.icon className="w-4 h-4" />
-                </div>
-                <span className="text-xs font-medium">{tab.label}</span>
-              </TabsTrigger>
-            ))}
-          </TabsList>
 
           {tabData.map((tab) => (
             <TabsContent key={tab.id} value={tab.id} className="space-y-4">
