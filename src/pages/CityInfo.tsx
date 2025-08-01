@@ -324,14 +324,14 @@ const CityInfo = () => {
       <div className="p-6">
         {/* Modern Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-6 bg-accent/50 p-1 rounded-xl">
+          <TabsList className="grid w-full grid-cols-4 mb-6 bg-muted p-1 rounded-xl border">
             {tabData.map((tab) => (
               <TabsTrigger 
                 key={tab.id} 
                 value={tab.id} 
                 className="flex flex-col gap-1.5 py-3 px-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all duration-200"
               >
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center group-data-[state=active]:bg-primary group-data-[state=active]:text-primary-foreground">
+                <div className="w-8 h-8 rounded-full bg-muted-foreground/10 flex items-center justify-center data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-colors">
                   <tab.icon className="w-4 h-4" />
                 </div>
                 <span className="text-xs font-medium">{tab.label}</span>
