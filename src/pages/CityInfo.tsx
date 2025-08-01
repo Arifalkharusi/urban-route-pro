@@ -318,7 +318,7 @@ const CityInfo = () => {
 
       <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 mt-4 sm:mt-6">
         {/* Modern Tab Selectors */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-4 sm:mb-6 mt-6 sm:mt-0">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-4 sm:mb-6">
           {tabData.map((tab) => (
             <button
               key={tab.id}
