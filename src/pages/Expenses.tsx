@@ -436,11 +436,71 @@ const Expenses = () => {
             </Dialog>
           </GradientCard>
         ) : (
-          <div className="space-y-2 sm:space-y-3">
+          <div className="space-y-3 sm:space-y-2">
             {filteredExpenses.map((expense) => (
               <GradientCard key={expense.id} className="hover:shadow-soft transition-shadow">
-                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-0">
-                  <div className="flex-1">
+                <div className="space-y-3 sm:space-y-0 sm:flex sm:items-start sm:justify-between">
+                  {/* Mobile: Top Section with Amount and Time */}
+                  <div className="flex justify-between items-start sm:hidden">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Receipt className="w-3 h-3" />
+                      {formatTime(expense.date)}
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-warning">
+                        -${expense.amount.toFixed(2)}
+                      </p>
+                      {expense.type === "mileage" && (
+                        <p className="text-xs text-primary">Auto-calc</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Mobile: Category and Description */}
+                  <div className="sm:hidden">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-8 h-8 bg-warning/20 rounded-full flex items-center justify-center text-warning">
+                        {getCategoryIcon(expense.category)}
+                      </div>
+                      <div className="flex-1">
+                        <span className="font-medium text-sm bg-accent text-accent-foreground px-2 py-1 rounded-lg">
+                          {expense.category}
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-sm font-medium text-foreground mb-3">{expense.description}</p>
+                  </div>
+
+                  {/* Mobile: Stats Grid */}
+                  <div className="grid grid-cols-2 gap-3 sm:hidden">
+                    <div className="bg-muted/20 rounded-lg p-2 text-center">
+                      <div className="flex items-center justify-center gap-1 mb-1">
+                        {getCategoryIcon(expense.category)}
+                      </div>
+                      <p className="text-xs font-medium">{expense.category}</p>
+                      <p className="text-xs text-muted-foreground">category</p>
+                    </div>
+                    {expense.type === "mileage" && expense.miles ? (
+                      <div className="bg-primary/10 rounded-lg p-2 text-center">
+                        <div className="flex items-center justify-center gap-1 mb-1">
+                          <Car className="w-3 h-3 text-primary" />
+                        </div>
+                        <p className="text-xs font-medium text-primary">{expense.miles} mi</p>
+                        <p className="text-xs text-muted-foreground">${expense.costPerMile}/mi</p>
+                      </div>
+                    ) : (
+                      <div className="bg-muted/20 rounded-lg p-2 text-center">
+                        <div className="flex items-center justify-center gap-1 mb-1">
+                          <Receipt className="w-3 h-3 text-muted-foreground" />
+                        </div>
+                        <p className="text-xs font-medium">Manual</p>
+                        <p className="text-xs text-muted-foreground">entry</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Desktop: Original Layout */}
+                  <div className="hidden sm:block sm:flex-1">
                     <div className="flex items-center gap-2 mb-2 flex-wrap">
                       <div className="w-7 h-7 sm:w-8 sm:h-8 bg-warning/20 rounded-full flex items-center justify-center text-warning">
                         {getCategoryIcon(expense.category)}
@@ -467,7 +527,8 @@ const Expenses = () => {
                     </div>
                   </div>
                   
-                  <div className="text-left sm:text-right">
+                  {/* Desktop: Amount Display */}
+                  <div className="hidden sm:block sm:text-right">
                     <p className="text-lg sm:text-xl font-bold text-warning">
                       -${expense.amount.toFixed(2)}
                     </p>
