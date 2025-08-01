@@ -197,28 +197,30 @@ const Targets = () => {
             </Button>
           </GradientCard>
         ) : (
-          <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-4">
             {targets.map((target) => {
               const progressPercentage = getProgressPercentage(target.current, target.amount);
               const isCompleted = progressPercentage >= 100;
               const remaining = target.amount - target.current;
 
               return (
-                <GradientCard key={target.id} className="hover:shadow-elegant transition-all duration-300 animate-fade-in">
-                  <div className="space-y-3 sm:space-y-4">
-                    {/* Header */}
+                <GradientCard key={target.id} className="hover:shadow-elegant transition-all duration-300 animate-fade-in p-4 sm:p-6">
+                  {/* Mobile-optimized layout */}
+                  <div className="space-y-4">
+                    {/* Top section - Period info and edit button */}
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 sm:gap-3">
-                        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center transition-colors ${
+                      <div className="flex items-center gap-3">
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${
                           isCompleted 
                             ? "bg-gradient-to-br from-success to-success/80 text-white" 
                             : "bg-gradient-to-br from-primary to-primary/80 text-white"
                         }`}>
                           {getPeriodIcon(target.period)}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-bold text-base sm:text-lg capitalize truncate">{target.period} Goal</h3>
-                          <p className="text-xs sm:text-sm text-muted-foreground">
+                        <div>
+                          <h3 className="font-bold text-lg capitalize">{target.period} Target</h3>
+                          <p className="text-sm text-muted-foreground flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
                             {getRemainingTime(target.period, target.startDate)}
                           </p>
                         </div>
@@ -228,86 +230,83 @@ const Targets = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => openEditDialog(target)}
-                        className="h-8 w-8 sm:h-9 sm:w-9 p-0 hover:bg-muted/50 rounded-xl flex-shrink-0"
+                        className="h-10 w-10 p-0 hover:bg-muted/50 rounded-xl"
                       >
-                        <Edit3 className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <Edit3 className="w-4 h-4" />
                       </Button>
                     </div>
 
-                    {/* Amount Display */}
-                    <div className="flex items-end justify-between mb-2 sm:mb-3">
-                      <div>
-                        <p className="text-xs sm:text-sm text-muted-foreground">Current Progress</p>
-                        <p className="text-2xl sm:text-3xl font-bold text-foreground">${target.current.toFixed(2)}</p>
+                    {/* Amount section - Stacked for mobile */}
+                    <div className="bg-muted/20 rounded-2xl p-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm text-muted-foreground">Progress</span>
+                        <span className="text-sm font-medium">{progressPercentage.toFixed(1)}%</span>
                       </div>
-                      <div className="text-right">
-                        <p className="text-xs sm:text-sm text-muted-foreground">Target</p>
-                        <p className="text-lg sm:text-xl font-semibold text-muted-foreground">${target.amount.toFixed(2)}</p>
+                      
+                      <div className="flex items-baseline justify-between mb-3">
+                        <div>
+                          <span className="text-3xl font-bold text-foreground">${target.current.toFixed(2)}</span>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-lg text-muted-foreground">of ${target.amount.toFixed(2)}</span>
+                        </div>
                       </div>
-                    </div>
 
-                    {/* Progress Bar */}
-                    <div className="space-y-2 sm:space-y-3">
                       <Progress 
                         value={progressPercentage} 
-                        className="h-3 sm:h-4 bg-muted/30"
+                        className="h-2 bg-muted/50"
                       />
                       
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-1 sm:gap-2">
-                          <div className={`w-2 h-2 rounded-full ${isCompleted ? 'bg-success' : 'bg-primary'}`} />
-                          <span className="text-xs sm:text-sm font-medium">{progressPercentage.toFixed(1)}% complete</span>
-                        </div>
-                        {!isCompleted && (
-                          <span className="text-xs sm:text-sm text-muted-foreground">${remaining.toFixed(2)} remaining</span>
-                        )}
-                        {isCompleted && (
-                          <span className="text-xs sm:text-sm text-success font-medium flex items-center gap-1">
-                            🎉 Achieved!
+                      <div className="flex justify-between items-center mt-2">
+                        {!isCompleted ? (
+                          <span className="text-sm text-muted-foreground">${remaining.toFixed(2)} remaining</span>
+                        ) : (
+                          <span className="text-sm text-success font-medium flex items-center gap-1">
+                            🎉 Target Achieved!
                           </span>
                         )}
                       </div>
                     </div>
 
-                    {/* Stats Grid */}
-                    <div className="grid grid-cols-2 gap-3 sm:gap-4 pt-3 sm:pt-4 border-t border-border/50">
+                    {/* Stats section - Mobile optimized grid */}
+                    <div className="grid grid-cols-2 gap-3">
                       {target.period === "daily" && (
                         <>
-                          <div className="bg-muted/30 rounded-xl p-2 sm:p-3 text-center">
-                            <p className="text-xs text-muted-foreground">Today's Rate</p>
-                            <p className="font-bold text-sm sm:text-lg">${(target.current).toFixed(2)}/day</p>
+                          <div className="bg-primary/5 border border-primary/10 rounded-xl p-3 text-center">
+                            <div className="text-xs text-muted-foreground mb-1">Today's Earnings</div>
+                            <div className="font-bold text-lg text-primary">${target.current.toFixed(2)}</div>
                           </div>
-                          <div className="bg-muted/30 rounded-xl p-2 sm:p-3 text-center">
-                            <p className="text-xs text-muted-foreground">Completion</p>
-                            <p className="font-bold text-sm sm:text-lg">{progressPercentage.toFixed(0)}%</p>
+                          <div className="bg-muted/30 rounded-xl p-3 text-center">
+                            <div className="text-xs text-muted-foreground mb-1">Completion</div>
+                            <div className="font-bold text-lg">{progressPercentage.toFixed(0)}%</div>
                           </div>
                         </>
                       )}
                       
                       {target.period === "weekly" && (
                         <>
-                          <div className="bg-muted/30 rounded-xl p-2 sm:p-3 text-center">
-                            <p className="text-xs text-muted-foreground">Daily Average</p>
-                            <p className="font-bold text-sm sm:text-lg">${(target.current / 7).toFixed(2)}</p>
+                          <div className="bg-primary/5 border border-primary/10 rounded-xl p-3 text-center">
+                            <div className="text-xs text-muted-foreground mb-1">Daily Avg</div>
+                            <div className="font-bold text-lg text-primary">${(target.current / 7).toFixed(2)}</div>
                           </div>
-                          <div className="bg-muted/30 rounded-xl p-2 sm:p-3 text-center">
-                            <p className="text-xs text-muted-foreground">Daily Needed</p>
-                            <p className="font-bold text-sm sm:text-lg">
+                          <div className="bg-muted/30 rounded-xl p-3 text-center">
+                            <div className="text-xs text-muted-foreground mb-1">Daily Needed</div>
+                            <div className="font-bold text-lg">
                               ${remaining > 0 ? (remaining / Math.max(1, Math.ceil((new Date(target.startDate.getTime() + 7 * 24 * 60 * 60 * 1000).getTime() - new Date().getTime()) / (24 * 60 * 60 * 1000)))).toFixed(2) : "0.00"}
-                            </p>
+                            </div>
                           </div>
                         </>
                       )}
                       
                       {target.period === "monthly" && (
                         <>
-                          <div className="bg-muted/30 rounded-xl p-2 sm:p-3 text-center">
-                            <p className="text-xs text-muted-foreground">Weekly Average</p>
-                            <p className="font-bold text-sm sm:text-lg">${(target.current / 4).toFixed(2)}</p>
+                          <div className="bg-primary/5 border border-primary/10 rounded-xl p-3 text-center">
+                            <div className="text-xs text-muted-foreground mb-1">Weekly Avg</div>
+                            <div className="font-bold text-lg text-primary">${(target.current / 4).toFixed(2)}</div>
                           </div>
-                          <div className="bg-muted/30 rounded-xl p-2 sm:p-3 text-center">
-                            <p className="text-xs text-muted-foreground">Daily Average</p>
-                            <p className="font-bold text-sm sm:text-lg">${(target.current / 30).toFixed(2)}</p>
+                          <div className="bg-muted/30 rounded-xl p-3 text-center">
+                            <div className="text-xs text-muted-foreground mb-1">Daily Avg</div>
+                            <div className="font-bold text-lg">${(target.current / 30).toFixed(2)}</div>
                           </div>
                         </>
                       )}
