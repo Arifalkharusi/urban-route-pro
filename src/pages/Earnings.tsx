@@ -153,7 +153,7 @@ const Earnings = () => {
                   Add
                 </Button>
               </DialogTrigger>
-              <DialogContent className="mx-4 rounded-2xl w-[calc(100vw-2rem)] sm:w-full max-w-md max-h-[90vh] overflow-y-auto">
+              <DialogContent className="rounded-2xl w-[calc(100vw-2rem)] sm:w-full max-w-md max-h-[90vh] overflow-y-auto left-4 right-4 translate-x-0 sm:left-[50%] sm:translate-x-[-50%]">
                 <DialogHeader className="pb-4">
                   <DialogTitle className="text-lg sm:text-xl">Add New Earning</DialogTitle>
                   <DialogDescription className="text-sm sm:text-base">
