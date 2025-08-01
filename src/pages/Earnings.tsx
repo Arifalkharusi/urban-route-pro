@@ -127,29 +127,29 @@ const Earnings = () => {
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
-      <div className="bg-gradient-primary text-white p-6 pb-8">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-2xl font-bold">Earnings</h1>
-            <p className="opacity-90">Track your income by platform</p>
+      <div className="bg-gradient-primary text-white p-4 sm:p-6 pb-6 sm:pb-8">
+        <div className="flex justify-between items-start sm:items-center mb-4 sm:mb-6">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold truncate">Earnings</h1>
+            <p className="opacity-90 text-sm sm:text-base mt-1">Track your income by platform</p>
           </div>
-          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-            <DollarSign className="w-5 h-5" />
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-full flex items-center justify-center ml-3 flex-shrink-0">
+            <DollarSign className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
         </div>
 
         {/* Earnings Overview */}
         <GradientCard variant="card" className="bg-white/10 backdrop-blur-sm border-white/20">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold text-white">Earnings Overview</h2>
+          <div className="flex justify-between items-start sm:items-center mb-3 sm:mb-4 gap-3">
+            <h2 className="text-base sm:text-lg font-semibold text-white">Earnings Overview</h2>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button 
                   size="sm" 
                   variant="ghost"
-                  className="bg-white/20 hover:bg-white/30 text-white border-0 h-8 px-3"
+                  className="bg-white/20 hover:bg-white/30 text-white border-0 h-8 px-2 sm:px-3 text-xs sm:text-sm"
                 >
-                  <Plus className="w-4 h-4 mr-1" />
+                  <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                   Add
                 </Button>
               </DialogTrigger>
@@ -251,34 +251,34 @@ const Earnings = () => {
             </Dialog>
           </div>
           
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-2 sm:gap-4">
             <div className="text-center">
-              <p className="text-white/80 text-sm">Total</p>
-              <p className="text-xl font-bold text-white">${totalEarnings.toFixed(2)}</p>
+              <p className="text-white/80 text-xs sm:text-sm">Total</p>
+              <p className="text-lg sm:text-xl font-bold text-white">${totalEarnings.toFixed(2)}</p>
             </div>
             <div className="text-center">
-              <p className="text-white/80 text-sm">Platforms</p>
-              <p className="text-xl font-bold text-white">{Object.keys(groupedEarnings).length}</p>
+              <p className="text-white/80 text-xs sm:text-sm">Platforms</p>
+              <p className="text-lg sm:text-xl font-bold text-white">{Object.keys(groupedEarnings).length}</p>
             </div>
             <div className="text-center">
-              <p className="text-white/80 text-sm">Entries</p>
-              <p className="text-xl font-bold text-white">{filteredEarnings.length}</p>
+              <p className="text-white/80 text-xs sm:text-sm">Entries</p>
+              <p className="text-lg sm:text-xl font-bold text-white">{filteredEarnings.length}</p>
             </div>
           </div>
         </GradientCard>
       </div>
 
-      <div className="p-6 space-y-6 -mt-4">
+      <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 -mt-4">
         {/* Date Filter */}
         <GradientCard>
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-lg">Filter by Date Range</h3>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
+            <h3 className="font-semibold text-base sm:text-lg">Filter by Date Range</h3>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
                   className={cn(
-                    "justify-start text-left font-normal",
+                    "justify-start text-left font-normal w-full sm:w-auto text-sm",
                     !dateRange?.from && "text-muted-foreground"
                   )}
                 >
@@ -286,8 +286,8 @@ const Earnings = () => {
                   {dateRange?.from ? (
                     dateRange.to ? (
                       <>
-                        {format(dateRange.from, "LLL dd, y")} -{" "}
-                        {format(dateRange.to, "LLL dd, y")}
+                        {format(dateRange.from, "MMM dd")} -{" "}
+                        {format(dateRange.to, "MMM dd, y")}
                       </>
                     ) : (
                       format(dateRange.from, "LLL dd, y")
@@ -304,7 +304,7 @@ const Earnings = () => {
                   defaultMonth={dateRange?.from}
                   selected={dateRange}
                   onSelect={setDateRange}
-                  numberOfMonths={2}
+                  numberOfMonths={1}
                   className="p-3 pointer-events-auto"
                 />
               </PopoverContent>
@@ -333,17 +333,17 @@ const Earnings = () => {
               const totalHours = platformEarnings.reduce((sum, earning) => sum + earning.hours, 0);
               
               return (
-                <div key={platform} className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
+                <div key={platform} className="space-y-2 sm:space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
+                    <div className="flex items-center gap-2 sm:gap-3">
                       <Badge className={getPlatformColor(platform)}>
                         {platform}
                       </Badge>
-                      <span className="text-sm text-muted-foreground">
+                      <span className="text-xs sm:text-sm text-muted-foreground">
                         ${platformTotal.toFixed(2)} total
                       </span>
                     </div>
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-3 sm:gap-4 text-xs text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <Car className="w-3 h-3" />
                         {totalTrips} trips
@@ -358,31 +358,31 @@ const Earnings = () => {
                   <div className="space-y-2">
                     {platformEarnings.map((earning) => (
                       <GradientCard key={earning.id} className="hover:shadow-soft transition-shadow">
-                        <div className="flex justify-between items-center">
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <CalendarIcon className="w-4 h-4" />
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0">
+                          <div className="space-y-2 sm:space-y-1 flex-1">
+                            <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                              <CalendarIcon className="w-3 h-3 sm:w-4 sm:h-4" />
                               {new Date(earning.date).toLocaleDateString()}
                             </div>
-                            <div className="flex items-center gap-4 text-sm">
+                            <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm">
                               <div className="flex items-center gap-1">
-                                <Users className="w-4 h-4 text-muted-foreground" />
+                                <Users className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground" />
                                 <span>{earning.trips} trips</span>
                               </div>
                               <div className="flex items-center gap-1">
-                                <Clock className="w-4 h-4 text-muted-foreground" />
+                                <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground" />
                                 <span>{earning.hours}h</span>
                               </div>
-                              <div className="text-muted-foreground">
+                              <div className="text-muted-foreground col-span-2 sm:col-span-1">
                                 ${(earning.amount / earning.trips).toFixed(2)}/trip
                               </div>
                             </div>
                           </div>
-                          <div className="text-right">
-                            <p className="text-xl font-bold text-success">
+                          <div className="text-left sm:text-right">
+                            <p className="text-lg sm:text-xl font-bold text-success">
                               ${earning.amount.toFixed(2)}
                             </p>
-                            <div className="flex items-center gap-1 text-sm text-success">
+                            <div className="flex items-center gap-1 text-xs sm:text-sm text-success">
                               <TrendingUp className="w-3 h-3" />
                               ${(earning.amount / earning.hours).toFixed(2)}/hr
                             </div>
