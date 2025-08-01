@@ -5,10 +5,15 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import GradientCard from "@/components/GradientCard";
 import MobileNavigation from "@/components/MobileNavigation";
-import { Plus, Car, Clock, DollarSign, Users, TrendingUp, Calendar } from "lucide-react";
+import { Plus, Car, Clock, DollarSign, Users, TrendingUp, Calendar as CalendarIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import type { DateRange } from "react-day-picker";
 
 interface Earning {
   id: string;
@@ -31,6 +36,10 @@ const Earnings = () => {
   
   const [customPlatforms, setCustomPlatforms] = useState<string[]>(["Lyft"]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: new Date(new Date().setDate(new Date().getDate() - 30)),
+    to: new Date()
+  });
   const [formData, setFormData] = useState({
     amount: "",
     platform: "",
@@ -89,8 +98,15 @@ const Earnings = () => {
     });
   };
 
-  // Group earnings by platform
-  const groupedEarnings = earnings.reduce((acc, earning) => {
+  // Filter earnings by date range
+  const filteredEarnings = earnings.filter(earning => {
+    if (!dateRange?.from || !dateRange?.to) return true;
+    const earningDate = new Date(earning.date);
+    return earningDate >= dateRange.from && earningDate <= dateRange.to;
+  });
+
+  // Group filtered earnings by platform
+  const groupedEarnings = filteredEarnings.reduce((acc, earning) => {
     if (!acc[earning.platform]) {
       acc[earning.platform] = [];
     }
@@ -98,7 +114,7 @@ const Earnings = () => {
     return acc;
   }, {} as Record<string, Earning[]>);
 
-  const totalEarnings = earnings.reduce((sum, earning) => sum + earning.amount, 0);
+  const totalEarnings = filteredEarnings.reduce((sum, earning) => sum + earning.amount, 0);
 
   const getPlatformColor = (platform: string) => {
     switch (platform.toLowerCase()) {
@@ -246,14 +262,56 @@ const Earnings = () => {
             </div>
             <div className="text-center">
               <p className="text-white/80 text-sm">Entries</p>
-              <p className="text-xl font-bold text-white">{earnings.length}</p>
+              <p className="text-xl font-bold text-white">{filteredEarnings.length}</p>
             </div>
           </div>
         </GradientCard>
       </div>
 
       <div className="p-6 space-y-6 -mt-4">
-        {earnings.length === 0 ? (
+        {/* Date Filter */}
+        <GradientCard>
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-lg">Filter by Date Range</h3>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "justify-start text-left font-normal",
+                    !dateRange?.from && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {dateRange?.from ? (
+                    dateRange.to ? (
+                      <>
+                        {format(dateRange.from, "LLL dd, y")} -{" "}
+                        {format(dateRange.to, "LLL dd, y")}
+                      </>
+                    ) : (
+                      format(dateRange.from, "LLL dd, y")
+                    )
+                  ) : (
+                    <span>Pick a date range</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  initialFocus
+                  mode="range"
+                  defaultMonth={dateRange?.from}
+                  selected={dateRange}
+                  onSelect={setDateRange}
+                  numberOfMonths={2}
+                  className="p-3 pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+        </GradientCard>
+        {filteredEarnings.length === 0 ? (
           <GradientCard className="text-center py-8">
             <Car className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="font-semibold mb-2">No earnings yet</h3>

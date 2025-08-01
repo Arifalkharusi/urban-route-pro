@@ -5,9 +5,14 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import GradientCard from "@/components/GradientCard";
 import MobileNavigation from "@/components/MobileNavigation";
-import { Plus, Fuel, Wrench, Receipt, Car, Calculator } from "lucide-react";
+import { Plus, Fuel, Wrench, Receipt, Car, Calculator, Calendar as CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import type { DateRange } from "react-day-picker";
 
 interface Expense {
   id: string;
@@ -45,6 +50,10 @@ const Expenses = () => {
   const [customCategories, setCustomCategories] = useState<string[]>(["Parking", "Tolls"]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [expenseType, setExpenseType] = useState<"manual" | "mileage">("manual");
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: new Date(new Date().setDate(new Date().getDate() - 30)),
+    to: new Date()
+  });
   const [newExpense, setNewExpense] = useState({
     amount: "",
     category: "",
@@ -57,9 +66,14 @@ const Expenses = () => {
   const defaultCategories = ["Fuel", "Maintenance", "Insurance", "Other"];
   const allCategories = [...defaultCategories, ...customCategories];
 
-  const totalToday = expenses
-    .filter(expense => expense.date.toDateString() === new Date().toDateString())
-    .reduce((sum, expense) => sum + expense.amount, 0);
+  // Filter expenses by date range
+  const filteredExpenses = expenses.filter(expense => {
+    if (!dateRange?.from || !dateRange?.to) return true;
+    const expenseDate = new Date(expense.date);
+    return expenseDate >= dateRange.from && expenseDate <= dateRange.to;
+  });
+
+  const totalToday = filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0);
 
   const handleAddExpense = () => {
     if (expenseType === "manual" && newExpense.amount && newExpense.category) {
@@ -297,18 +311,61 @@ const Expenses = () => {
             </div>
             <div className="text-center">
               <p className="text-white/80 text-sm">Categories</p>
-              <p className="text-xl font-bold text-white">{new Set(expenses.map(e => e.category)).size}</p>
+              <p className="text-xl font-bold text-white">{new Set(filteredExpenses.map(e => e.category)).size}</p>
             </div>
             <div className="text-center">
               <p className="text-white/80 text-sm">Entries</p>
-              <p className="text-xl font-bold text-white">{expenses.length}</p>
+              <p className="text-xl font-bold text-white">{filteredExpenses.length}</p>
             </div>
           </div>
         </GradientCard>
       </div>
 
       <div className="p-6 space-y-6 -mt-4">
-        {expenses.length === 0 ? (
+        {/* Date Filter */}
+        <GradientCard>
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-lg">Filter by Date Range</h3>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "justify-start text-left font-normal",
+                    !dateRange?.from && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {dateRange?.from ? (
+                    dateRange.to ? (
+                      <>
+                        {format(dateRange.from, "LLL dd, y")} -{" "}
+                        {format(dateRange.to, "LLL dd, y")}
+                      </>
+                    ) : (
+                      format(dateRange.from, "LLL dd, y")
+                    )
+                  ) : (
+                    <span>Pick a date range</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  initialFocus
+                  mode="range"
+                  defaultMonth={dateRange?.from}
+                  selected={dateRange}
+                  onSelect={setDateRange}
+                  numberOfMonths={2}
+                  className="p-3 pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+        </GradientCard>
+
+        {filteredExpenses.length === 0 ? (
           <GradientCard className="text-center py-8">
             <Receipt className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="font-semibold mb-2">No expenses recorded</h3>
@@ -324,7 +381,7 @@ const Expenses = () => {
           </GradientCard>
         ) : (
           <div className="space-y-3">
-            {expenses.map((expense) => (
+            {filteredExpenses.map((expense) => (
               <GradientCard key={expense.id} className="hover:shadow-soft transition-shadow">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">

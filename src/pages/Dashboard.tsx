@@ -1,15 +1,25 @@
 import { useState } from "react";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import GradientCard from "@/components/GradientCard";
 import MobileNavigation from "@/components/MobileNavigation";
-import { TrendingUp, TrendingDown, Target, DollarSign, BarChart3, Activity } from "lucide-react";
+import { TrendingUp, TrendingDown, Target, DollarSign, BarChart3, Activity, CalendarIcon, Filter } from "lucide-react";
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import type { DateRange } from "react-day-picker";
 
 const Dashboard = () => {
   const [todayEarnings] = useState(247.50);
   const [todayExpenses] = useState(45.20);
   const [weeklyTarget] = useState(1500);
   const [weeklyProgress] = useState(980);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: new Date(new Date().setDate(new Date().getDate() - 7)),
+    to: new Date()
+  });
 
   const progressPercentage = (weeklyProgress / weeklyTarget) * 100;
   const netIncome = todayEarnings - todayExpenses;
@@ -119,6 +129,48 @@ const Dashboard = () => {
       </div>
 
       <div className="p-6 space-y-6 -mt-4">
+        {/* Date Filter */}
+        <GradientCard>
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-lg">Filter by Date Range</h3>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "justify-start text-left font-normal",
+                    !dateRange.from && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {dateRange.from ? (
+                    dateRange.to ? (
+                      <>
+                        {format(dateRange.from, "LLL dd, y")} -{" "}
+                        {format(dateRange.to, "LLL dd, y")}
+                      </>
+                    ) : (
+                      format(dateRange.from, "LLL dd, y")
+                    )
+                  ) : (
+                    <span>Pick a date range</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  initialFocus
+                  mode="range"
+                  defaultMonth={dateRange.from}
+                  selected={dateRange}
+                  onSelect={setDateRange}
+                  numberOfMonths={2}
+                  className="p-3 pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+        </GradientCard>
         {/* Weekly Target Progress */}
         <GradientCard>
           <div className="space-y-4">
