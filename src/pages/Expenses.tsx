@@ -377,7 +377,7 @@ const Expenses = () => {
         </GradientCard>
       </div>
 
-      <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 -mt-4">
+      <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 mt-4 sm:mt-6">
         {/* Date Filter */}
         <GradientCard>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">

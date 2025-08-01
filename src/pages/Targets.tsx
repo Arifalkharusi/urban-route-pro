@@ -182,7 +182,7 @@ const Targets = () => {
         </GradientCard>
       </div>
 
-      <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 -mt-4">
+      <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 mt-4 sm:mt-6">
         {targets.length === 0 ? (
           <GradientCard className="text-center py-8">
             <Target className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
