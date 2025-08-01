@@ -319,7 +319,7 @@ const Earnings = () => {
             <p className="text-muted-foreground mb-4">Start tracking your platform earnings</p>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant="default" className="rounded-xl">
+                <Button variant="success" className="rounded-xl">
                   <Plus className="w-4 h-4 mr-2" />
                   Add Your First Earning
                 </Button>
@@ -379,25 +379,25 @@ const Earnings = () => {
 
                           {/* Mobile: Bottom Section with Stats */}
                           <div className="grid grid-cols-3 gap-3 sm:hidden">
-                            <div className="bg-muted/20 rounded-lg p-2 text-center">
-                              <div className="flex items-center justify-center gap-1 mb-1">
-                                <Users className="w-3 h-3 text-muted-foreground" />
-                              </div>
-                              <p className="text-xs font-medium">{earning.trips}</p>
-                              <p className="text-xs text-muted-foreground">trips</p>
-                            </div>
-                            <div className="bg-muted/20 rounded-lg p-2 text-center">
-                              <div className="flex items-center justify-center gap-1 mb-1">
-                                <Clock className="w-3 h-3 text-muted-foreground" />
-                              </div>
-                              <p className="text-xs font-medium">{earning.hours}h</p>
-                              <p className="text-xs text-muted-foreground">hours</p>
-                            </div>
                             <div className="bg-success/10 rounded-lg p-2 text-center">
                               <div className="flex items-center justify-center gap-1 mb-1">
-                                <DollarSign className="w-3 h-3 text-success" />
+                                <Users className="w-3 h-3 text-success" />
                               </div>
-                              <p className="text-xs font-medium text-success">${(earning.amount / earning.trips).toFixed(2)}</p>
+                              <p className="text-xs font-medium text-success">{earning.trips}</p>
+                              <p className="text-xs text-muted-foreground">trips</p>
+                            </div>
+                            <div className="bg-accent/10 rounded-lg p-2 text-center">
+                              <div className="flex items-center justify-center gap-1 mb-1">
+                                <Clock className="w-3 h-3 text-accent" />
+                              </div>
+                              <p className="text-xs font-medium text-accent">{earning.hours}h</p>
+                              <p className="text-xs text-muted-foreground">hours</p>
+                            </div>
+                            <div className="bg-primary/10 rounded-lg p-2 text-center">
+                              <div className="flex items-center justify-center gap-1 mb-1">
+                                <DollarSign className="w-3 h-3 text-primary" />
+                              </div>
+                              <p className="text-xs font-medium text-primary">${(earning.amount / earning.trips).toFixed(2)}</p>
                               <p className="text-xs text-muted-foreground">per trip</p>
                             </div>
                           </div>
