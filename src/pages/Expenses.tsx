@@ -508,123 +508,85 @@ const Expenses = () => {
             </Dialog>
           </GradientCard>
         ) : (
-          <div className="space-y-3 sm:space-y-2">
+          <div className="space-y-4">
             {filteredExpenses.map((expense) => (
-              <GradientCard key={expense.id} className="hover:shadow-soft transition-shadow">
-                {/* Edit and Delete buttons - Top of card */}
-                <div className="flex justify-end gap-2 mb-3">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => openEditDialog(expense)}
-                    className="h-8 w-8 p-0 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full"
-                  >
-                    <Edit3 className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => openDeleteDialog(expense.id)}
-                    className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-full"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-
-                <div className="space-y-3 sm:space-y-0 sm:flex sm:items-start sm:justify-between">
-                  {/* Mobile: Top Section with Amount and Time */}
-                  <div className="flex justify-between items-start sm:hidden">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Receipt className="w-3 h-3" />
-                      {formatTime(expense.date)}
-                    </div>
-                    <div className="text-right">
-                      <p className="text-lg font-bold text-destructive">
-                        -${expense.amount.toFixed(2)}
-                      </p>
-                      {expense.type === "mileage" && (
-                        <p className="text-xs text-accent">Auto-calc</p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Mobile: Category and Description */}
-                  <div className="sm:hidden">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 bg-destructive/20 rounded-full flex items-center justify-center text-destructive">
+              <GradientCard key={expense.id} className="hover:shadow-elegant transition-all duration-300 animate-fade-in p-4 sm:p-6">
+                {/* Mobile-optimized layout */}
+                <div className="space-y-4">
+                  {/* Top section - Category info and action buttons */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${
+                        expense.category === "Fuel" 
+                          ? "bg-gradient-to-br from-destructive to-destructive/80 text-white"
+                          : expense.category === "Maintenance"
+                          ? "bg-gradient-to-br from-warning to-warning/80 text-white"
+                          : expense.category === "Mileage"
+                          ? "bg-gradient-to-br from-accent to-accent/80 text-white"
+                          : "bg-gradient-to-br from-muted to-muted/80 text-muted-foreground"
+                      }`}>
                         {getCategoryIcon(expense.category)}
                       </div>
-                      <div className="flex-1">
-                        <span className="font-medium text-sm bg-muted/30 text-foreground px-2 py-1 rounded-lg">
-                          {expense.category}
-                        </span>
+                      <div>
+                        <h3 className="font-bold text-base text-primary">{expense.category}</h3>
+                        <p className="text-xs text-muted-foreground flex items-center gap-1">
+                          <Receipt className="w-3 h-3" />
+                          {formatTime(expense.date)}
+                        </p>
                       </div>
-                    </div>
-                    <p className="text-sm font-medium text-foreground mb-3">{expense.description}</p>
-                  </div>
-
-                  {/* Mobile: Stats Grid */}
-                  <div className="grid grid-cols-2 gap-3 sm:hidden">
-                    <div className="bg-muted/20 rounded-lg p-2 text-center">
-                      <div className="flex items-center justify-center gap-1 mb-1">
-                        {getCategoryIcon(expense.category)}
-                      </div>
-                      <p className="text-xs font-medium">{expense.category}</p>
-                      <p className="text-xs text-muted-foreground">category</p>
-                    </div>
-                    {expense.type === "mileage" && expense.miles ? (
-                      <div className="bg-accent/10 rounded-lg p-2 text-center">
-                        <div className="flex items-center justify-center gap-1 mb-1">
-                          <Car className="w-3 h-3 text-accent" />
-                        </div>
-                        <p className="text-xs font-medium text-accent">{expense.miles} mi</p>
-                        <p className="text-xs text-muted-foreground">${expense.costPerMile}/mi</p>
-                      </div>
-                    ) : (
-                      <div className="bg-muted/20 rounded-lg p-2 text-center">
-                        <div className="flex items-center justify-center gap-1 mb-1">
-                          <Receipt className="w-3 h-3 text-muted-foreground" />
-                        </div>
-                        <p className="text-xs font-medium">Manual</p>
-                        <p className="text-xs text-muted-foreground">entry</p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Desktop: Original Layout */}
-                  <div className="hidden sm:block sm:flex-1">
-                    <div className="flex items-center gap-2 mb-2 flex-wrap">
-                      <div className="w-7 h-7 sm:w-8 sm:h-8 bg-destructive/20 rounded-full flex items-center justify-center text-destructive">
-                        {getCategoryIcon(expense.category)}
-                      </div>
-                      <span className="font-medium text-xs sm:text-sm bg-muted/30 text-foreground px-2 py-1 rounded-lg">
-                        {expense.category}
-                      </span>
-                      {expense.type === "mileage" && (
-                        <span className="text-xs bg-accent/20 text-accent px-2 py-1 rounded">
-                          Auto-calculated
-                        </span>
-                      )}
                     </div>
                     
-                    <div className="space-y-1">
-                      <p className="text-xs sm:text-sm font-medium">{expense.description}</p>
-                      
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs text-muted-foreground">
-                        <span>{formatTime(expense.date)}</span>
-                        {expense.type === "mileage" && expense.miles && (
-                          <span>{expense.miles} miles @ ${expense.costPerMile}/mi</span>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openEditDialog(expense)}
+                        className="h-10 w-10 p-0 hover:bg-muted/50 rounded-xl"
+                      >
+                        <Edit3 className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openDeleteDialog(expense.id)}
+                        className="h-10 w-10 p-0 text-muted-foreground hover:text-destructive rounded-xl"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Amount section */}
+                  <div className="bg-muted/20 rounded-2xl p-4">
+                    <div className="flex items-baseline justify-between mb-2">
+                      <div>
+                        <span className="text-2xl font-bold text-destructive">-${expense.amount.toFixed(2)}</span>
+                      </div>
+                      <div className="text-right">
+                        {expense.type === "mileage" && (
+                          <span className="text-xs text-accent font-medium">Auto-calculated</span>
                         )}
                       </div>
                     </div>
+                    
+                    <div className="text-sm text-muted-foreground">
+                      {expense.description}
+                    </div>
                   </div>
-                  
-                  {/* Desktop: Amount Display */}
-                  <div className="hidden sm:block sm:text-right">
-                    <p className="text-lg sm:text-xl font-bold text-destructive">
-                      -${expense.amount.toFixed(2)}
-                    </p>
-                  </div>
+
+                  {/* Details section - Mobile optimized */}
+                  {expense.type === "mileage" && expense.miles && expense.costPerMile && (
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-accent/5 border border-accent/10 rounded-xl p-3 text-center">
+                        <div className="text-xs text-muted-foreground mb-1">Miles</div>
+                        <div className="font-bold text-base text-accent">{expense.miles}</div>
+                      </div>
+                      <div className="bg-muted/30 rounded-xl p-3 text-center">
+                        <div className="text-xs text-muted-foreground mb-1">Rate/Mile</div>
+                        <div className="font-bold text-base">${expense.costPerMile?.toFixed(3)}</div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </GradientCard>
             ))}
