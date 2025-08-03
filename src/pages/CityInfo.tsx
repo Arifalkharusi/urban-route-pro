@@ -63,22 +63,134 @@ const CityInfo = () => {
   
   const cities = Object.keys(cityConfig);
 
-  // Show empty transport data - no API integration
+  // Demo transport data
   const fetchTransportData = async (city: string) => {
     setLoading(true);
     
-    // Set empty data for all transport types
-    setTransportData({
-      flights: [],
-      trains: [],
-      buses: [],
-      events: []
-    });
+    const config = cityConfig[city as keyof typeof cityConfig];
     
-    toast({
-      title: "No data available",
-      description: "Transport API integration has been removed",
-      variant: "destructive"
+    // Demo data based on selected city
+    const demoFlights = [
+      {
+        id: "flight-1",
+        title: `British Airways BA1420 - ${config?.airportName || 'Airport'}`,
+        type: "flight" as const,
+        time: "14:35",
+        location: `${config?.iata || 'BHX'} Terminal 1`,
+        details: "Arrival from London Heathrow",
+        passengers: 180
+      },
+      {
+        id: "flight-2", 
+        title: `Ryanair FR8394 - ${config?.airportName || 'Airport'}`,
+        type: "flight" as const,
+        time: "16:20",
+        location: `${config?.iata || 'BHX'} Terminal 2`,
+        details: "Arrival from Dublin",
+        passengers: 189
+      },
+      {
+        id: "flight-3",
+        title: `Emirates EK39 - ${config?.airportName || 'Airport'}`,
+        type: "flight" as const,
+        time: "18:45", 
+        location: `${config?.iata || 'BHX'} Terminal 1`,
+        details: "Arrival from Dubai",
+        passengers: 380
+      }
+    ];
+
+    const demoTrains = [
+      {
+        id: "train-1",
+        title: `CrossCountry Service - ${config?.railHub || 'Station'}`,
+        type: "train" as const,
+        time: "15:12",
+        location: config?.railHub || 'Birmingham New Street',
+        details: "To London Euston",
+        passengers: 420
+      },
+      {
+        id: "train-2",
+        title: `Avanti West Coast - ${config?.railHub || 'Station'}`,
+        type: "train" as const, 
+        time: "15:45",
+        location: config?.railHub || 'Birmingham New Street',
+        details: "To Manchester Piccadilly",
+        passengers: 360
+      },
+      {
+        id: "train-3",
+        title: `West Midlands Railway - ${config?.railHub || 'Station'}`,
+        type: "train" as const,
+        time: "16:08",
+        location: config?.railHub || 'Birmingham New Street', 
+        details: "To Wolverhampton",
+        passengers: 280
+      }
+    ];
+
+    const demoBuses = [
+      {
+        id: "bus-1",
+        title: `National Express NX909 - ${config?.coachStation || 'Coach Station'}`,
+        type: "bus" as const,
+        time: "14:30",
+        location: config?.coachStation || 'Birmingham Coach Station',
+        details: "To London Victoria Coach Station",
+        passengers: 49
+      },
+      {
+        id: "bus-2",
+        title: `Megabus M12 - ${config?.coachStation || 'Coach Station'}`,
+        type: "bus" as const,
+        time: "15:15", 
+        location: config?.coachStation || 'Birmingham Coach Station',
+        details: "To Cardiff Central Bus Station",
+        passengers: 45
+      },
+      {
+        id: "bus-3",
+        title: `FlixBus FB352 - ${config?.coachStation || 'Coach Station'}`,
+        type: "bus" as const,
+        time: "16:45",
+        location: config?.coachStation || 'Birmingham Coach Station',
+        details: "To Edinburgh Bus Station", 
+        passengers: 52
+      }
+    ];
+
+    const demoEvents = [
+      {
+        id: "event-1",
+        title: city === "Birmingham" ? "Birmingham Symphony Hall Concert" : 
+              city === "Manchester" ? "Manchester Arena Event" : "Liverpool Philharmonic Concert",
+        type: "event" as const,
+        time: "19:30",
+        location: city === "Birmingham" ? "Symphony Hall Birmingham" :
+                 city === "Manchester" ? "AO Arena Manchester" : "Liverpool Philharmonic Hall",
+        details: "Evening performance - expect high footfall",
+        passengers: city === "Manchester" ? 21000 : 2000
+      },
+      {
+        id: "event-2",
+        title: `${city} Business Conference`,
+        type: "event" as const,
+        time: "09:00", 
+        location: `${city} International Convention Centre`,
+        details: "Major business networking event",
+        passengers: 1500
+      }
+    ];
+
+    // Simulate loading delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    setTransportData({
+      flights: demoFlights,
+      trains: demoTrains,
+      buses: demoBuses,
+      events: demoEvents
     });
     
     setLoading(false);
