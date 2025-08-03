@@ -41,10 +41,14 @@ const CityInfo = () => {
   });
   const { toast } = useToast();
 
-  // Times for API call
-  const times = {
-    current: "2025-08-09T00:00",
-    future: "2025-08-09T23:59"
+  // Times for API call (12 hour window to avoid API error)
+  const getCurrentTimes = () => {
+    const now = new Date();
+    const future = new Date(now.getTime() + 12 * 60 * 60 * 1000); // 12 hours from now
+    return {
+      current: now.toISOString().slice(0, 16), // Format: YYYY-MM-DDTHH:MM
+      future: future.toISOString().slice(0, 16)
+    };
   };
 
   // UK cities with their transport hubs
@@ -71,43 +75,99 @@ const CityInfo = () => {
   
   const cities = Object.keys(cityConfig);
 
-  // Demo transport data
-  const fetchTransportData = async (city: string) => {
+  // Fetch flights from API based on selected city
+  useEffect(() => {
+    const fetchArrivals = async () => {
+      const config = cityConfig[searchCity as keyof typeof cityConfig];
+      if (!config) return;
+
+      const headers = {
+        "X-RapidAPI-Key": "8301f8c387msh12139157bfaee9bp116ab6jsn0633ba721fa9",
+        "X-RapidAPI-Host": "aerodatabox.p.rapidapi.com",
+      };
+
+      const times = getCurrentTimes();
+      const url = `https://aerodatabox.p.rapidapi.com/flights/airports/iata/${config.iata}/${times.current}/${times.future}?withLeg=true&direction=Both&withCancelled=true&withCodeshared=true&withCargo=true&withPrivate=true&withLocation=false`;
+
+      try {
+        const response = await fetch(url, { headers });
+        const data = await response.json();
+
+        if (data.arrivals) {
+          const filtered = data.arrivals.filter((arrival: any) => {
+            return (
+              arrival.codeshareStatus === "IsOperator" &&
+              arrival.isCargo === false
+            );
+          });
+          console.log('Filtered arrivals:', filtered);
+          setArrivals(filtered);
+        } else {
+          console.log('No arrivals data:', data);
+          setArrivals([]);
+        }
+      } catch (err) {
+        console.error("Failed to fetch arrivals:", err);
+        setArrivals([]);
+      }
+    };
+
+    fetchArrivals();
+  }, [searchCity]);
+
+  // Convert API data to grouped hourly data and update transport data
+  useEffect(() => {
+    const counts: Record<number, number> = {};
+
+    arrivals.forEach((flight) => {
+      const scheduledTime = flight?.arrival?.scheduledTime?.local;
+      if (!scheduledTime) return;
+      
+      // Parse the time string and get hour
+      const date = new Date(scheduledTime.replace(" ", "T"));
+      const hour = date.getHours();
+      counts[hour] = (counts[hour] || 0) + 1;
+    });
+
+    const result = Object.entries(counts)
+      .sort((a, b) => Number(a[0]) - Number(b[0]))
+      .map(([hour, count]) => ({
+        hour: `${hour.padStart(2, "0")}:00 - ${(Number(hour) + 1)
+          .toString()
+          .padStart(2, "0")}:00`,
+        count,
+        locations: [cityConfig[searchCity as keyof typeof cityConfig]?.iata || 'Airport'],
+        totalPassengers: 0,
+      }));
+
+    setFlightData(result);
+
+    // Convert API arrivals to CityEvent format for display
+    const flightEvents: CityEvent[] = arrivals.map((flight, index) => {
+      const scheduledTime = flight?.arrival?.scheduledTime?.local;
+      const time = scheduledTime ? new Date(scheduledTime.replace(" ", "T")).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : 'Unknown';
+      
+      return {
+        id: `flight-api-${index}`,
+        title: `${flight.airline?.name || 'Unknown Airline'} ${flight.number || ''}`,
+        type: "flight" as const,
+        time: time,
+        location: `${cityConfig[searchCity as keyof typeof cityConfig]?.iata || 'Airport'} ${flight.arrival?.terminal || ''}`,
+        details: `Arrival from ${flight.departure?.airport?.name || 'Unknown'}`,
+        passengers: flight.aircraft?.model ? 200 : 180 // Estimate based on aircraft
+      };
+    });
+
+    // Fetch demo data for other transport types
+    fetchTransportData(searchCity, flightEvents);
+  }, [arrivals, searchCity]);
+
+  // Updated fetchTransportData to accept real flight data
+  const fetchTransportData = async (city: string, realFlights: CityEvent[] = []) => {
     setLoading(true);
     
     const config = cityConfig[city as keyof typeof cityConfig];
     
-    // Demo data based on selected city
-    const demoFlights = [
-      {
-        id: "flight-1",
-        title: `British Airways BA1420 - ${config?.airportName || 'Airport'}`,
-        type: "flight" as const,
-        time: "14:35",
-        location: `${config?.iata || 'BHX'} Terminal 1`,
-        details: "Arrival from London Heathrow",
-        passengers: 180
-      },
-      {
-        id: "flight-2", 
-        title: `Ryanair FR8394 - ${config?.airportName || 'Airport'}`,
-        type: "flight" as const,
-        time: "16:20",
-        location: `${config?.iata || 'BHX'} Terminal 2`,
-        details: "Arrival from Dublin",
-        passengers: 189
-      },
-      {
-        id: "flight-3",
-        title: `Emirates EK39 - ${config?.airportName || 'Airport'}`,
-        type: "flight" as const,
-        time: "18:45", 
-        location: `${config?.iata || 'BHX'} Terminal 1`,
-        details: "Arrival from Dubai",
-        passengers: 380
-      }
-    ];
-
     const demoTrains = [
       {
         id: "train-1",
@@ -195,7 +255,7 @@ const CityInfo = () => {
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     setTransportData({
-      flights: demoFlights,
+      flights: realFlights, // Use real API data for flights
       trains: demoTrains,
       buses: demoBuses,
       events: demoEvents
@@ -203,69 +263,6 @@ const CityInfo = () => {
     
     setLoading(false);
   };
-  useEffect(() => {
-    const fetchArrivals = async () => {
-      const headers = {
-        "X-RapidAPI-Key": "8301f8c387msh12139157bfaee9bp116ab6jsn0633ba721fa9",
-        "X-RapidAPI-Host": "aerodatabox.p.rapidapi.com",
-      };
-
-      const url = `https://aerodatabox.p.rapidapi.com/flights/airports/iata/BHX/${times.current}/${times.future}?withLeg=true&direction=Both&withCancelled=true&withCodeshared=true&withCargo=true&withPrivate=true&withLocation=false`;
-
-      try {
-        const response = await fetch(url, { headers });
-        const data = await response.json();
-
-        const filtered = data.arrivals.filter((arrival) => {
-          return (
-            arrival.codeshareStatus === "IsOperator" &&
-            arrival.isCargo === false
-          );
-        });
-        console.log(filtered);
-        setArrivals(filtered); // ✅ This is what was missing
-      } catch (err) {
-        // setError(err.message);
-        console.error("Failed to fetch arrivals:", err);
-      }
-    };
-
-    fetchArrivals();
-  }, []);
-
-  useEffect(() => {
-    const counts: Record<number, number> = {};
-
-    arrivals.forEach((flight) => {
-      const utc = flight?.arrival?.scheduledTime?.local;
-
-      if (!utc) return;
-      // Convert to Date and get hour
-      const date = new Date(utc.replace(" ", "T")); // Fix for "2025-08-09 09:35Z"
-      const hour = date.getUTCHours();
-
-      counts[hour] = (counts[hour] || 0) + 1;
-    });
-
-    const result = Object.entries(counts)
-      .sort((a, b) => Number(a[0]) - Number(b[0]))
-      .map(([hour, count]) => ({
-        hour: `${hour.padStart(2, "0")}:00 - ${(Number(hour) + 1)
-          .toString()
-          .padStart(2, "0")}:00`,
-        count,
-        locations: ["BHX"],
-        totalPassengers: 0,
-      }));
-
-    setFlightData(result);
-    console.log(result);
-  }, [arrivals]);
-
-  // Fetch data when city changes
-  useEffect(() => {
-    fetchTransportData(searchCity);
-  }, [searchCity]);
 
   const getIcon = (type: string) => {
     switch (type) {
