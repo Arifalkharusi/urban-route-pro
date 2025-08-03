@@ -31,6 +31,8 @@ const CityInfo = () => {
   const [searchCity, setSearchCity] = useState("Birmingham");
   const [activeTab, setActiveTab] = useState("flights");
   const [loading, setLoading] = useState(false);
+  const [arrivals, setArrivals] = useState<any[]>([]);
+  const [flightData, setFlightData] = useState<HourlyCount[]>([]);
   const [transportData, setTransportData] = useState<Record<string, CityEvent[]>>({
     flights: [],
     trains: [],
@@ -38,6 +40,12 @@ const CityInfo = () => {
     events: []
   });
   const { toast } = useToast();
+
+  // Times for API call
+  const times = {
+    current: "2025-08-09T00:00",
+    future: "2025-08-09T23:59"
+  };
 
   // UK cities with their transport hubs
   const cityConfig = {
@@ -195,6 +203,65 @@ const CityInfo = () => {
     
     setLoading(false);
   };
+  useEffect(() => {
+    const fetchArrivals = async () => {
+      const headers = {
+        "X-RapidAPI-Key": "8301f8c387msh12139157bfaee9bp116ab6jsn0633ba721fa9",
+        "X-RapidAPI-Host": "aerodatabox.p.rapidapi.com",
+      };
+
+      const url = `https://aerodatabox.p.rapidapi.com/flights/airports/iata/BHX/${times.current}/${times.future}?withLeg=true&direction=Both&withCancelled=true&withCodeshared=true&withCargo=true&withPrivate=true&withLocation=false`;
+
+      try {
+        const response = await fetch(url, { headers });
+        const data = await response.json();
+
+        const filtered = data.arrivals.filter((arrival) => {
+          return (
+            arrival.codeshareStatus === "IsOperator" &&
+            arrival.isCargo === false
+          );
+        });
+        console.log(filtered);
+        setArrivals(filtered); // ✅ This is what was missing
+      } catch (err) {
+        // setError(err.message);
+        console.error("Failed to fetch arrivals:", err);
+      }
+    };
+
+    fetchArrivals();
+  }, []);
+
+  useEffect(() => {
+    const counts: Record<number, number> = {};
+
+    arrivals.forEach((flight) => {
+      const utc = flight?.arrival?.scheduledTime?.local;
+
+      if (!utc) return;
+      // Convert to Date and get hour
+      const date = new Date(utc.replace(" ", "T")); // Fix for "2025-08-09 09:35Z"
+      const hour = date.getUTCHours();
+
+      counts[hour] = (counts[hour] || 0) + 1;
+    });
+
+    const result = Object.entries(counts)
+      .sort((a, b) => Number(a[0]) - Number(b[0]))
+      .map(([hour, count]) => ({
+        hour: `${hour.padStart(2, "0")}:00 - ${(Number(hour) + 1)
+          .toString()
+          .padStart(2, "0")}:00`,
+        count,
+        locations: ["BHX"],
+        totalPassengers: 0,
+      }));
+
+    setFlightData(result);
+    console.log(result);
+  }, [arrivals]);
+
   // Fetch data when city changes
   useEffect(() => {
     fetchTransportData(searchCity);
