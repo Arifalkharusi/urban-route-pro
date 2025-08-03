@@ -63,180 +63,25 @@ const CityInfo = () => {
   
   const cities = Object.keys(cityConfig);
 
-  // Fetch real transport data via Supabase edge functions
+  // Show empty transport data - no API integration
   const fetchTransportData = async (city: string) => {
     setLoading(true);
-    console.log(`Fetching real transport data for ${city} via Supabase...`);
     
-    try {
-      const config = cityConfig[city as keyof typeof cityConfig];
-      if (!config) {
-        throw new Error(`Configuration not found for ${city}`);
-      }
-
-      const today = new Date().toISOString().split('T')[0];
-      const currentTime = new Date().toLocaleTimeString('en-GB', { hour12: false }).substring(0, 5);
-      
-      // Fetch flight data via Supabase edge function
-      let flightData = { flights: [] };
-      try {
-        console.log(`Fetching flights for ${config.iata}...`);
-        const flightResponse = await fetch('/api/v1/rest/rpc/invoke', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            function_name: 'get-flight-data',
-            args: { 
-              iataCode: config.iata, 
-              date: today 
-            }
-          })
-        });
-        
-        if (flightResponse.ok) {
-          const data = await flightResponse.json();
-          flightData = data;
-          console.log(`Found ${flightData.flights.length} flights`);
-        } else {
-          console.error(`Flight API error: ${flightResponse.status}`);
-        }
-      } catch (error) {
-        console.error('Flight API error:', error);
-      }
-      
-      // Fetch train data via Supabase edge function
-      let trainData = { trains: [] };
-      try {
-        console.log(`Fetching trains from ${config.railHub}...`);
-        const trainResponse = await fetch('/api/v1/rest/rpc/invoke', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            function_name: 'get-transport-data',
-            args: {
-              from: config.railHub,
-              to: "London",
-              type: "train",
-              date: today,
-              time: currentTime
-            }
-          })
-        });
-        
-        if (trainResponse.ok) {
-          const data = await trainResponse.json();
-          trainData = data;
-          console.log(`Found ${trainData.trains.length} trains`);
-        } else {
-          console.error(`Train API error: ${trainResponse.status}`);
-        }
-      } catch (error) {
-        console.error('Train API error:', error);
-      }
-      
-      // Fetch bus data via Supabase edge function
-      let busData = { buses: [] };
-      try {
-        console.log(`Fetching buses from ${config.coachStation}...`);
-        const busResponse = await fetch('/api/v1/rest/rpc/invoke', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            function_name: 'get-transport-data',
-            args: {
-              from: config.coachStation,
-              to: "London Victoria Coach Station",
-              type: "bus",
-              date: today,
-              time: currentTime
-            }
-          })
-        });
-        
-        if (busResponse.ok) {
-          const data = await busResponse.json();
-          busData = data;
-          console.log(`Found ${busData.buses.length} buses`);
-        } else {
-          console.error(`Bus API error: ${busResponse.status}`);
-        }
-      } catch (error) {
-        console.error('Bus API error:', error);
-      }
-
-      // Events data
-      const eventsData = {
-        events: [
-          {
-            id: "event-1",
-            title: city === "Birmingham" ? "Birmingham Symphony Hall Concert" : 
-                  city === "Manchester" ? "Manchester Arena Event" : "Liverpool Philharmonic Concert",
-            type: "event" as const,
-            time: "19:30",
-            location: city === "Birmingham" ? "Symphony Hall Birmingham" :
-                     city === "Manchester" ? "AO Arena Manchester" : "Liverpool Philharmonic Hall",
-            details: "Evening performance - expect high footfall",
-            passengers: city === "Manchester" ? 21000 : 2000
-          },
-          {
-            id: "event-2",
-            title: `${city} Business Conference`,
-            type: "event" as const, 
-            time: "09:00",
-            location: `${city} International Convention Centre`,
-            details: "Major business networking event",
-            passengers: 1500
-          }
-        ]
-      };
-
-      setTransportData({
-        flights: flightData.flights || [],
-        trains: trainData.trains || [],
-        buses: busData.buses || [],
-        events: eventsData.events || []
-      });
-
-      const hasRealData = flightData.flights.length > 0 || trainData.trains.length > 0 || busData.buses.length > 0;
-      
-      toast({
-        title: hasRealData ? "Live transport data loaded" : "No live data available",
-        description: hasRealData ? `Real API data for ${city}` : `No live transport data found for ${city}`,
-        variant: hasRealData ? "default" : "destructive"
-      });
-
-      console.log('Final transport data:', {
-        flights: flightData.flights?.length || 0,
-        trains: trainData.trains?.length || 0,  
-        buses: busData.buses?.length || 0,
-        events: eventsData.events?.length || 0,
-        usingRealData: hasRealData
-      });
-
-    } catch (error) {
-      console.error('Error fetching transport data:', error);
-      
-      setTransportData({
-        flights: [],
-        trains: [],
-        buses: [],
-        events: []
-      });
-      
-      toast({
-        title: "Failed to load live data",
-        description: "Unable to fetch live transport data from APIs",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
+    // Set empty data for all transport types
+    setTransportData({
+      flights: [],
+      trains: [],
+      buses: [],
+      events: []
+    });
+    
+    toast({
+      title: "No data available",
+      description: "Transport API integration has been removed",
+      variant: "destructive"
+    });
+    
+    setLoading(false);
   };
   // Fetch data when city changes
   useEffect(() => {
